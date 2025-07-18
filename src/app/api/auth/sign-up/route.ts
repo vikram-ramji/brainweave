@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { SignupInputSchema } from "@/schemas/auth/signup";
 import { NextRequest, NextResponse } from "next/server";
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import {
   sendErrorResponse,
