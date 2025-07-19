@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
  * @param status The HTTP status code (default: 200).
  * @returns NextResponse object.
  */
-export function sendSuccessResponse<T>(
+export function SuccessResponse<T>(
   message: string,
   status: number = 200,
   data?: T
@@ -22,9 +22,9 @@ export function sendSuccessResponse<T>(
  * @param status The HTTP status code (default: 500).
  * @returns NextResponse object.
  */
-export function sendErrorResponse(
+export function ErrorResponse(
   message: string,
-  status: number = 500
+  status: number = 400
 ): NextResponse<ApiErrorResponse> {
   return NextResponse.json({ success: false, message }, { status });
 }

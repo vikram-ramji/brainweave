@@ -3,10 +3,7 @@ import { SignupInputSchema } from "@/schemas/auth/signup";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
-import {
-  sendErrorResponse,
-  sendSuccessResponse,
-} from "@/helpers/sendApiResponse";
+import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       console.error("Invalid Email or Password provided");
-      return sendErrorResponse("Error registering user", 400);
+      return ErrorResponse("Error registering user", 400);
     }
 
     const { email, password, username } = parsed.data;
@@ -26,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       if (existingUser.isVerified) {
-        return sendErrorResponse("User already exists with this email", 400);
+        return ErrorResponse("User already exists with this email", 400);
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
         await prisma.user.update({
@@ -61,15 +58,15 @@ export async function POST(request: NextRequest) {
     );
 
     if (!emailResponse.success) {
-      return sendErrorResponse(emailResponse.message, 500);
+      return ErrorResponse(emailResponse.message, 500);
     }
 
-    return sendSuccessResponse(
+    return SuccessResponse(
       "User registered successfully. Please verify your email",
       201
     );
   } catch (error) {
     console.error("Error registering user", error);
-    return sendErrorResponse("Error registering user", 500);
+    return ErrorResponse("Error registering user", 500);
   }
 }
