@@ -1,25 +1,19 @@
 import { resend } from "@/lib/resend";
 import VerificationEmail from "../../emails/VerificationEmail";
 import { ApiResponse } from "@/types/ApiResponse";
+import { Session } from "@/lib/auth-client";
 
 /**
  * Helper function to send a verification email to the user.
- * @param email User's email.
- * @param username User's username.
- * @param verifyCode User's verification code.
  * @returns Promise<ApiResponse> object.
  */
-export async function sendVerificationEmail(
-  email: string,
-  username: string,
-  verifyCode: string
-): Promise<ApiResponse> {
+export async function sendVerificationEmail(url: string, user: Session): Promise<ApiResponse> {
   try {
     await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: email,
-      subject: "Brainweave | Verification code",
-      react: VerificationEmail({ username, otp: verifyCode }),
+      to: user.email,
+      subject: "Brainweave | Verification email",
+      react: VerificationEmail({url, name: user.name}),
     });
     return { success: true, message: "Verification email sent successfully" };
   } catch (emailError) {

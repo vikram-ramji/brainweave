@@ -11,41 +11,40 @@ import {
   Text,
 } from "@react-email/components";
 
-interface VerificationEmailProps {
+interface ResetPasswordEmailProps {
   url: string;
   name: string;
 }
 
-export const VerificationEmailTemplate = ({
+export const ResetPasswordEmailTemplate = ({
   url,
   name,
-}: VerificationEmailProps) => (
+}: ResetPasswordEmailProps) => (
   <Html>
     <Head />
     <Body style={main}>
-      <Preview>Verify your Email</Preview>
+      <Preview>Reset your Password</Preview>
       <Container style={container}>
         <Heading style={heading}>Hi {name}!</Heading>
         <Section style={buttonContainer}></Section>
         <Text style={paragraph}>
-          Thank you for signing up! Please click the button below to verify your
-          email address and complete your registration.
+          Please click the button below to reset your password.
         </Text>
         <Hr style={hr} />
         <Link href={url} style={reportLink}>
-          Click here to verify your email address
+          Click here to reset your password
         </Link>
       </Container>
     </Body>
   </Html>
 );
 
-VerificationEmailTemplate.PreviewProps = {
-  url: "https://example.com/verify-email",
+ResetPasswordEmailTemplate.PreviewProps = {
+  url: "https://example.com/reset-password",
   name: "Brett",
-} as VerificationEmailProps;
+} as ResetPasswordEmailProps;
 
-export default VerificationEmailTemplate;
+export default ResetPasswordEmailTemplate;
 
 const main = {
   backgroundColor: "#ffffff",
