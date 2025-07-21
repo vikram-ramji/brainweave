@@ -19,7 +19,7 @@ export function SuccessResponse<T>(
 /**
  * Helper function to send a consistent error API response.
  * @param message A descriptive error message.
- * @param status The HTTP status code (default: 500).
+ * @param status The HTTP status code (default: 400).
  * @returns NextResponse object.
  */
 export function ErrorResponse(
