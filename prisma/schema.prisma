@@ -20,6 +20,7 @@ model User {
   notes         Note[]
   tags          Tag[]
 
+  @@index([email])
   @@unique([email])
   @@map("user")
 }
@@ -36,7 +37,7 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
-  @@index([userId])
+  @@index([userId, token])
   @@map("session")
 }
 
@@ -69,7 +70,7 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([identifier, value])
+  @@unique([identifier])
   @@map("verification")
 }
 
@@ -97,6 +98,6 @@ model Tag {
   updatedAt DateTime @updatedAt
 
   @@unique([name, userId])
-  @@index([userId])
+  @@index([userId, name])
   @@map("tag")
 }

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       return ErrorResponse("Not Authenticated", 401);
     }
 
-    const searchParams = request.nextUrl.searchParams;
+    const searchParams = new URL(request.url).searchParams;
     const queryParams = Object.fromEntries(searchParams.entries());
 
     const parsedQueryParams = cursorPaginationSchema.safeParse(queryParams);
