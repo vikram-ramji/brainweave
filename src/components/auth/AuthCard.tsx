@@ -1,7 +1,13 @@
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 
-export default function AuthCard({ title, description, children }: { title: string, description?: string, children: React.ReactNode }) {
+type AuthCardProps = {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}
+
+export default function AuthCard({ title, description, children }: AuthCardProps) {
   return (
     <Card className="w-full max-w-md p-2 rounded-lg border-0 bg-background">
         <CardHeader>

@@ -1,17 +1,18 @@
-import { Note } from "@/generated/prisma";
-import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
-import { auth } from "@/lib/auth";
+import getServerSession from "@/app/lib/getServerSession";
+import {
+  ErrorResponse,
+  SuccessResponseWithData,
+} from "@/helpers/ApiResponse";
 import { prisma } from "@/lib/db";
 import { CreateNoteSchema } from "@/schemas/notes";
 import { cursorPaginationSchema } from "@/schemas/pagination";
-import { headers } from "next/headers";
+import { NotesWithPagination } from "@/types/NotesApi";
+import { NoteWithTags } from "@/types/NoteWithTags";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getServerSession();
 
     if (!session?.user?.id) {
       return ErrorResponse("Not Authenticated", 401);
@@ -23,20 +24,27 @@ export async function POST(request: NextRequest) {
       return ErrorResponse("Invalid title or content", 400);
     }
 
-    const { title, content } = parsed.data;
+    const { title, content, tagIds, textContent } = parsed.data;
 
     const note = await prisma.note.create({
       data: {
         title,
-        content: content || "",
+        content: content || {},
+        textContent: textContent || "",
         userId: session.user.id,
+        ...(tagIds &&
+          tagIds.length > 0 && {
+            tags: {
+              connect: tagIds.map((id) => ({ id })),
+            },
+          }),
       },
       include: {
-        tags: true, // Include tags in response for consistency
+        tags: true,
       },
     });
 
-    return SuccessResponse("Note created successfully", 201, { note });
+    return SuccessResponseWithData<NoteWithTags>(note);
   } catch (error) {
     console.error("Failed to create note:", error);
     return ErrorResponse("Failed to create note, try again!", 500);
@@ -45,9 +53,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getServerSession();
 
     if (!session?.user?.id) {
       return ErrorResponse("Not Authenticated", 401);
@@ -68,7 +74,7 @@ export async function GET(request: NextRequest) {
         ...(search && {
           OR: [
             { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
+            { textContent: { contains: search, mode: "insensitive" } },
           ],
         }),
       },
@@ -82,7 +88,7 @@ export async function GET(request: NextRequest) {
 
     const nextCursor = notes.length > 0 ? notes[notes.length - 1].id : null;
 
-    return SuccessResponse("Notes fetched successfully", 200, {
+    return SuccessResponseWithData<NotesWithPagination>({
       notes,
       pagination: {
         limit,

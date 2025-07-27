@@ -1,5 +1,6 @@
+import getServerSession from "@/app/lib/getServerSession";
 import { Tag } from "@/generated/prisma";
-import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
+import { ErrorResponse, SuccessResponseWithData } from "@/helpers/ApiResponse";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { TagSchema } from "@/schemas/tags";
@@ -8,9 +9,7 @@ import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth.api.getSession({
-            headers: await headers()
-        });
+        const session = await getServerSession();
 
         if (!session?.user?.id) {
             return ErrorResponse("Not Authenticated", 401);
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
             }
         });
 
-        return SuccessResponse<Tag>("Tag created successfully", 201, tag);
+        return SuccessResponseWithData<Tag>(tag);
     } catch (error) {
         console.error("Error while creating tag:", error);
         return ErrorResponse("Failed to create tag", 500);
@@ -51,7 +50,7 @@ export async function GET() {
             where: { userId: session.user.id }
         });
 
-        return SuccessResponse<Tag[]>("Tags fetched successfully", 200, tags);
+        return SuccessResponseWithData<Tag[]>(tags);
     } catch (error) {
         console.error("Failed to fetch tags:", error);
         return ErrorResponse("Failed to fetch tags, try again!", 500);

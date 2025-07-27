@@ -1,15 +1,9 @@
+import getServerSession from "@/app/lib/getServerSession";
 import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { ApiErrorResponse } from "@/types/ApiResponse";
-import { ApiError } from "next/dist/server/api-utils";
-import { headers } from "next/headers";
-import { NextRequest } from "next/server";
 
 async function validateRequest(params: { noteId: string; tagId: string }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getServerSession();
 
   if (!session?.user?.id) {
     return {error: ErrorResponse("Not Authenticated", 401)};

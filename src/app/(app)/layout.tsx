@@ -1,17 +1,21 @@
-import Navbar from "@/components/navbar";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app/AppSidebar";
+import { Providers } from "./providers";
 
-export default async function DashboardLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-  return <section>
-    <Navbar session={session} />
-    {children}
-  </section>;
+  return (
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1 overflow-auto">
+          <SidebarInset />
+          <Providers>{children}</Providers>
+        </main>
+      </div>
+    </SidebarProvider>
+  );
 }

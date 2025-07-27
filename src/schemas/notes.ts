@@ -6,7 +6,9 @@ export const CreateNoteSchema = z.object({
     .string()
     .min(1, { message: "Note title is required" })
     .max(255, { message: "Note title cannot exceed 255 characters" }),
-  content: z.string().optional(),
+  content: z.any().optional(),
+  textContent: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export type CreateNoteInput = z.infer<typeof CreateNoteSchema>;
@@ -19,7 +21,8 @@ export const UpdateNoteSchema = z.object({
     .min(1, { message: "Note title cannot be empty" })
     .max(255, { message: "Note title cannot exceed 255 characters" })
     .optional(),
-  content: z.string().optional(),
+  content: z.any().optional(),
+  textContent: z.string().optional(),
 });
 
 export type UpdateNoteInput = z.infer<typeof UpdateNoteSchema>;

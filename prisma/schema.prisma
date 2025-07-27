@@ -77,7 +77,8 @@ model Verification {
 model Note {
   id      String @id @default(uuid())
   title   String
-  content String
+  textContent String
+  content Json
   userId  String
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags    Tag[]

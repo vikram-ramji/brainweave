@@ -1,15 +1,9 @@
 export interface ApiResponse<T = any> {
   success: boolean;
+  status: number;
   message: string;
-  data?: T;
 }
 
-// Inherit from ApiResponse for success cases
-export interface ApiSuccessResponse<T = any> extends ApiResponse<T> {
-  success: true;
-}
-
-// Inherit from ApiResponse for error cases
-export interface ApiErrorResponse extends ApiResponse<never> {
-  success: false;
+export interface ApiDataResponse<T> extends ApiResponse<T> {
+  data: T;
 }
