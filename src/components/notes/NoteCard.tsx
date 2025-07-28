@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import getLastUpdated from "@/helpers/getLastUpdated";
 import { NoteWithTags } from "@/types/NoteWithTags";
 import TagBadges from "../tags/TagBadges";
+import Link from "next/link";
 
 type NoteCardProps = {
   note: NoteWithTags;
@@ -43,7 +44,11 @@ export default function NoteCard({ note, onNoteDelete }: NoteCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{note.title}</CardTitle>
+        <Link href={`/note/${note.id}`}>
+          <CardTitle className="hover:text-primary cursor-pointer">
+            {note.title}
+          </CardTitle>
+        </Link>
         <CardDescription>Last updated at - {lastUpdated}</CardDescription>
         <CardAction>
           <AlertDialog>
@@ -70,11 +75,13 @@ export default function NoteCard({ note, onNoteDelete }: NoteCardProps) {
           </AlertDialog>
         </CardAction>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">
-          {note.textContent.slice(0, 100)}...
-        </p>
-      </CardContent>
+      <Link href={`/note/${note.id}`}>
+        <CardContent className="cursor-pointer hover:bg-muted/50 transition-colors">
+          <p className="text-sm text-muted-foreground">
+            {note.textContent.slice(0, 100)}...
+          </p>
+        </CardContent>
+      </Link>
       <CardFooter>
         <TagBadges tags={note.tags} limit={3} />
       </CardFooter>

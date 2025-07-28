@@ -23,9 +23,13 @@ import { SigninSchema } from "@/schemas/auth";
 import GithubAuthButton from "./GithubAuthButton";
 import GoogleAuthButton from "./GoogleAuthButton";
 import AuthFooter from "./AuthFooter";
+import { useFormSubmission } from "@/hooks/use-form-submission";
 
 export default function SigninForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSubmitting, setIsSubmitting, handleSubmit } = useFormSubmission({
+    successMessage: "Signin successful! Redirecting to dashboard...",
+    errorMessage: "Signin failed",
+  });
 
   const register = useForm<z.infer<typeof SigninSchema>>({
     resolver: zodResolver(SigninSchema),
@@ -36,31 +40,18 @@ export default function SigninForm() {
   });
 
   const onSubmit = async (inputData: z.infer<typeof SigninSchema>) => {
-    setIsSubmitting(true);
-
-    const { error } = await authClient.signIn.email({
-      email: inputData.email,
-      password: inputData.password,
-      callbackURL: "/dashboard",
-    });
-
-    if (error) {
-      toast.error("Signin failed:", {
-        description: error.message,
+    await handleSubmit(async () => {
+      return await authClient.signIn.email({
+        email: inputData.email,
+        password: inputData.password,
+        callbackURL: "/dashboard",
       });
-      setIsSubmitting(false);
-      return;
-    }
-
-    toast.success("Signin successful! Redirecting to dashboard...");
+    });
   };
 
   return (
     <AuthLayout>
-      <AuthCard
-        title="Welcome Back"
-        description="Please sign in to continue"
-      >
+      <AuthCard title="Welcome Back" description="Please sign in to continue">
         <Form {...register}>
           <form
             onSubmit={register.handleSubmit(onSubmit)}
@@ -92,7 +83,9 @@ export default function SigninForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 dark:text-slate-200">Password</FormLabel>
+                  <FormLabel className="text-slate-700 dark:text-slate-200">
+                    Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"

@@ -6,24 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tiptap/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AppHeader } from "../app/AppHeader";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "../ui/form";
+import { Form } from "../ui/form";
 import { SimpleEditor } from "../tiptap-templates/simple/simple-editor";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { X, Plus } from "lucide-react";
 import { Tag } from "@/generated/prisma";
+import { useTagManagement } from "@/hooks/use-tag-management";
+import { TagManager } from "./TagManager";
+import { NoteTitleField } from "./NoteTitleField";
 
 export default function NoteForm({
   session,
@@ -34,9 +27,6 @@ export default function NoteForm({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
-  const [availableTags, setAvailableTags] = useState<Tag[]>([]);
-  const [newTagName, setNewTagName] = useState("");
-  const [isCreatingTag, setIsCreatingTag] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -50,100 +40,63 @@ export default function NoteForm({
     },
   });
 
-  // Watch tagIds to display current tags
-  const watchedTagIds = register.watch("tagIds");
+  const tagManagement = useTagManagement({
+    form: register,
+    onTagChange: () => setHasChanged(true),
+  });
 
-  // Get current selected tags from available tags
-  // If availableTags is not loaded yet, create placeholder tags from IDs
+  // Get current selected tags with loading state support
   const currentTags: (Tag | { id: string; name: string })[] =
-    watchedTagIds?.map((tagId) => {
-      const foundTag = availableTags.find((tag) => tag.id === tagId);
-      return (
-        foundTag || { id: tagId, name: `Loading tag ${tagId.slice(0, 8)}...` }
-      );
-    }) || [];
+    tagManagement.currentTags.length > 0
+      ? tagManagement.currentTags
+      : register.watch("tagIds")?.map((tagId: string) => {
+          const foundTag = tagManagement.availableTags.find(
+            (tag) => tag.id === tagId
+          );
+          return (
+            foundTag || {
+              id: tagId,
+              name: `Loading tag ${tagId.slice(0, 8)}...`,
+            }
+          );
+        }) || [];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        // Fetch both note and tags in parallel
-        const [noteResponse, tagsResponse] = await Promise.all([
-          axios.get(`/api/notes/${noteId}`),
-          axios.get("/api/tags"),
-        ]);
-
-        if (noteResponse.data.success) {
-          console.log("Fetched note:", noteResponse.data.data);
-          const noteData = noteResponse.data.data;
-
-          // Transform the note data to extract tagIds from tags array
-          const formData = {
-            ...noteData,
-            tagIds: noteData.tags?.map((tag: Tag) => tag.id) || [],
-          };
-
-          register.reset(formData);
-        }
-
-        if (tagsResponse.data.success) {
-          setAvailableTags(tagsResponse.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to load note or tags");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [noteId, register]);
-
-  const createTag = async () => {
-    if (!newTagName.trim()) return;
-
-    setIsCreatingTag(true);
+  const fetchData = useCallback(async () => {
     try {
-      const response = await axios.post("/api/tags", {
-        name: newTagName.trim(),
-      });
-      if (response.data.success) {
-        const newTag = response.data.data;
-        setAvailableTags((prev) => [...prev, newTag]);
+      setIsLoading(true);
+      // Fetch both note and tags in parallel
+      const [noteResponse, tagsResponse] = await Promise.all([
+        axios.get(`/api/notes/${noteId}`),
+        axios.get("/api/tags"),
+      ]);
 
-        // Add the new tag to the form
-        const currentTagIds = register.getValues("tagIds") || [];
-        register.setValue("tagIds", [...currentTagIds, newTag.id]);
+      if (noteResponse.data.success) {
+        console.log("Fetched note:", noteResponse.data.data);
+        const noteData = noteResponse.data.data;
 
-        setNewTagName("");
-        setHasChanged(true);
-        toast.success("Tag created and added!");
+        // Transform the note data to extract tagIds from tags array
+        const formData = {
+          ...noteData,
+          tagIds: noteData.tags?.map((tag: Tag) => tag.id) || [],
+        };
+
+        register.reset(formData);
+      }
+
+      if (tagsResponse.data.success) {
+        tagManagement.setAvailableTags(tagsResponse.data.data);
       }
     } catch (error) {
-      console.error("Error creating tag:", error);
-      toast.error("Failed to create tag");
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load note or tags");
     } finally {
-      setIsCreatingTag(false);
+      setIsLoading(false);
     }
-  };
+  }, [noteId, register, tagManagement.setAvailableTags]);
 
-  const removeTag = (tagId: string) => {
-    const currentTagIds = register.getValues("tagIds") || [];
-    register.setValue(
-      "tagIds",
-      currentTagIds.filter((id) => id !== tagId)
-    );
-    setHasChanged(true);
-  };
-
-  const addExistingTag = (tag: Tag) => {
-    const currentTagIds = register.getValues("tagIds") || [];
-    if (!currentTagIds.includes(tag.id)) {
-      register.setValue("tagIds", [...currentTagIds, tag.id]);
-      setHasChanged(true);
-    }
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onSubmit = async (inputData: z.infer<typeof UpdateNoteSchema>) => {
     setIsSubmitting(true);
@@ -159,7 +112,7 @@ export default function NoteForm({
       } else {
         toast.error("Failed to Update note");
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred while updating the note");
     } finally {
       setIsSubmitting(false);
@@ -194,107 +147,24 @@ export default function NoteForm({
             onSubmit={register.handleSubmit(onSubmit)}
             className="flex flex-col"
           >
-            <FormField
+            <NoteTitleField
               control={register.control}
               name="title"
-              render={({ field }) => (
-                <FormItem className="p-4 border-b">
-                  <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setHasChanged(true);
-                      }}
-                      className="w-full text-4xl md:text-4xl text-center placeholder:text-4xl dark:text-4xl leading-tight h-auto py-2 px-4 font-serif focus-visible:border-0 focus-visible:ring-0 border-0 bg-background dark:bg-background"
-                      placeholder="Title"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              onChange={() => setHasChanged(true)}
             />
 
-            {/* Tags Section */}
-            <div className="p-4 border-b space-y-3">
-              {/* Current Tags */}
-              <div className="flex flex-wrap gap-2">
-                {currentTags.length > 0 ? (
-                  currentTags.map((tag) => (
-                    <Badge
-                      key={tag.id}
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
-                      {tag.name}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => removeTag(tag.id)}
-                        disabled={tag.name.startsWith("Loading")} // Disable for loading tags
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </Badge>
-                  ))
-                ) : (
-                  <p className="text-muted-foreground text-sm">
-                    No tags added yet
-                  </p>
-                )}
-              </div>
+            <TagManager
+              currentTags={currentTags}
+              availableTagsFiltered={tagManagement.availableTagsFiltered}
+              newTagName={tagManagement.newTagName}
+              setNewTagName={tagManagement.setNewTagName}
+              isCreatingTag={tagManagement.isCreatingTag}
+              onCreateTag={tagManagement.createTag}
+              onRemoveTag={tagManagement.removeTag}
+              onAddExistingTag={tagManagement.addExistingTag}
+              showLoadingState={true}
+            />
 
-              {/* Create New Tag */}
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Create new tag..."
-                  value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      createTag();
-                    }
-                  }}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  onClick={createTag}
-                  disabled={!newTagName.trim() || isCreatingTag}
-                  size="sm"
-                >
-                  <Plus className="h-4 w-4" />
-                  {isCreatingTag ? "Creating..." : "Add"}
-                </Button>
-              </div>
-
-              {/* Existing Tags */}
-              {availableTags.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Available tags:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {availableTags
-                      .filter((tag) => !watchedTagIds?.includes(tag.id))
-                      .map((tag) => (
-                        <Badge
-                          key={tag.id}
-                          variant="outline"
-                          className="cursor-pointer hover:bg-secondary"
-                          onClick={() => addExistingTag(tag)}
-                        >
-                          {tag.name}
-                        </Badge>
-                      ))}
-                  </div>
-                </div>
-              )}
-            </div>
             <div className="flex-1 bg-background border-b">
               <SimpleEditor
                 key={`editor-${noteId}-${JSON.stringify(register.getValues("content"))}`}

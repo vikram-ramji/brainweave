@@ -1,20 +1,12 @@
 "use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "./ModeToggle";
-import { authClient } from "@/lib/auth-client";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { UserSession } from "@/types/UserSession";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import UserAvatarDropdown from "./UserAvatarDropdown";
 
 export function AppHeader({
   session,
@@ -61,34 +53,8 @@ export function AppHeader({
                   : "Saved"}
           </Button>
         )}
-        {/* Mode Toggle */}
         <ModeToggle />
-        {/* User Avatar Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant={"outline"}
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-            >
-              {userInitial}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={async () => {
-                await authClient.signOut();
-                router.replace("/");
-              }}
-            >
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserAvatarDropdown userInitial={userInitial} />
       </div>
     </header>
   );

@@ -75,6 +75,7 @@ export async function GET(request: NextRequest) {
           OR: [
             { title: { contains: search, mode: "insensitive" } },
             { textContent: { contains: search, mode: "insensitive" } },
+            { tags: { some: { name: { contains: search, mode: "insensitive" } } } },
           ],
         }),
       },

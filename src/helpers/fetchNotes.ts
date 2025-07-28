@@ -1,22 +1,35 @@
 import axios from "axios";
 import { NotesWithPagination } from "@/types/NotesApi";
+import { toast } from "sonner";
 
 interface FetchNotesArgs {
   pageParam: string | null;
+  queryKey: string[];
 }
 
 export default async function fetchNotes({
   pageParam,
+  queryKey,
 }: FetchNotesArgs): Promise<NotesWithPagination> {
-  const query = pageParam ? `?cursor=${pageParam}` : "";
+  const [, searchQuery] = queryKey;
+  const params = new URLSearchParams();
 
-  const { data: response } = await axios.get(`/api/notes${query}`);
-
-  if (!response.success) {
-    throw new Error(response.message);
+  if (pageParam) {
+    params.append("cursor", pageParam);
   }
 
-  console.log("Fetched notes:", response.data);
+  if (searchQuery) {
+    params.append("search", searchQuery);
+  }
+
+  const queryString = params.toString();
+
+  const { data: response } = await axios.get(
+    `/api/notes${queryString ? `?${queryString}` : ""}`
+  );
+  if (!response.success) {
+    toast.error(`Error fetching notes: ${response.error || "Unknown error"}`);
+  }
 
   return response.data;
 }

@@ -21,10 +21,15 @@ import {
 import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import AuthFooter from "./AuthFooter";
+import { useFormSubmission } from "@/hooks/use-form-submission";
 
 export default function SignupForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const { isSubmitting, setIsSubmitting, handleSubmit } = useFormSubmission({
+    successMessage:
+      "Signup successful! Please check your email for verification.",
+    errorMessage: "Signup failed",
+  });
 
   const register = useForm<z.infer<typeof SignupSchema>>({
     resolver: zodResolver(SignupSchema),
@@ -38,28 +43,19 @@ export default function SignupForm() {
   });
 
   const onSubmit = async (inputData: z.infer<typeof SignupSchema>) => {
-    setIsSubmitting(true);
-
-    const { error } = await authClient.signUp.email({
-      name: `${inputData.firstName} ${inputData.lastName}`,
-      email: inputData.email,
-      password: inputData.password,
-      callbackURL: "/dashboard",
-    });
-
-    if (error) {
-      toast.error("Signup failed:", {
-        description: error.message,
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    toast.success(
-      "Signup successful! Please check your email for verification."
+    await handleSubmit(
+      async () => {
+        return await authClient.signUp.email({
+          name: `${inputData.firstName} ${inputData.lastName}`,
+          email: inputData.email,
+          password: inputData.password,
+          callbackURL: "/dashboard",
+        });
+      },
+      () => {
+        router.replace(`/verify?email=${inputData.email}`);
+      }
     );
-    router.replace(`/verify?email=${inputData.email}`);
-    setIsSubmitting(false);
   };
   return (
     <AuthLayout>
@@ -76,7 +72,9 @@ export default function SignupForm() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel className="text-center text-slate-700 dark:text-slate-200">First Name</FormLabel>
+                    <FormLabel className="text-center text-slate-700 dark:text-slate-200">
+                      First Name
+                    </FormLabel>
                     <FormControl>
                       <Input className="" placeholder="First Name" {...field} />
                     </FormControl>
@@ -89,9 +87,15 @@ export default function SignupForm() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel className="text-slate-700 dark:text-slate-200">Last Name</FormLabel>
+                    <FormLabel className="text-slate-700 dark:text-slate-200">
+                      Last Name
+                    </FormLabel>
                     <FormControl>
-                      <Input className="dark:text-slate-200" placeholder="Last Name" {...field} />
+                      <Input
+                        className="dark:text-slate-200"
+                        placeholder="Last Name"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,9 +109,15 @@ export default function SignupForm() {
               defaultValue=""
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 dark:text-slate-200">Email</FormLabel>
+                  <FormLabel className="text-slate-700 dark:text-slate-200">
+                    Email
+                  </FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Email" {...field} className="dark:text-slate-200" />
+                    <Input
+                      placeholder="E-mail"
+                      {...field}
+                      className="dark:text-slate-200"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,9 +130,16 @@ export default function SignupForm() {
               defaultValue=""
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 dark:text-slate-200">Password</FormLabel>
+                  <FormLabel className="text-slate-700 dark:text-slate-200">
+                    Password
+                  </FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Password" {...field} className="dark:text-slate-200" />
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      {...field}
+                      className="dark:text-slate-200"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,7 +152,9 @@ export default function SignupForm() {
               defaultValue=""
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 dark:text-slate-200">Confirm Password</FormLabel>
+                  <FormLabel className="text-slate-700 dark:text-slate-200">
+                    Confirm Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
