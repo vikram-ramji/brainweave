@@ -41,50 +41,54 @@ export default function NoteCard({ note, onNoteDelete }: NoteCardProps) {
   };
 
   const lastUpdated = getLastUpdated(note.updatedAt);
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <Link href={`/note/${note.id}`}>
-          <CardTitle className="hover:text-primary cursor-pointer">
-            {note.title}
-          </CardTitle>
-        </Link>
-        <CardDescription>Last updated at - {lastUpdated}</CardDescription>
-        <CardAction>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your note and remove your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteConfirm}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </CardAction>
-      </CardHeader>
-      <Link href={`/note/${note.id}`}>
-        <CardContent className="cursor-pointer hover:bg-muted/50 transition-colors">
+    <Link href={`/note/${note.id}`} className="block">
+      <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <CardHeader>
+          <CardTitle>{note.title}</CardTitle>
+          <CardDescription>Last updated at - {lastUpdated}</CardDescription>
+          <CardAction onClick={handleDeleteClick}>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">
+                  <Trash />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your note and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteConfirm}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
           <p className="text-sm text-muted-foreground">
-            {note.textContent.slice(0, 100)}...
+            {note.textContent.length > 100
+              ? `${note.textContent.slice(0, 100)}...`
+              : note.textContent}
           </p>
         </CardContent>
-      </Link>
-      <CardFooter>
-        <TagBadges tags={note.tags} limit={3} />
-      </CardFooter>
-    </Card>
+        <CardFooter>
+          <TagBadges tags={note.tags} limit={3} />
+        </CardFooter>
+      </Card>
+    </Link>
   );
 }

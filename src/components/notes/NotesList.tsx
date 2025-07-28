@@ -103,7 +103,7 @@ export function NotesList({ searchQuery }: { searchQuery: string }) {
   // 5) Data grid + infinite‐scroll sentinel
   return (
     <div className="p-4 flex flex-col">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {notes.map((note) => (
           <NoteCard key={note.id} note={note} onNoteDelete={handleNoteDelete} />
         ))}
@@ -112,7 +112,7 @@ export function NotesList({ searchQuery }: { searchQuery: string }) {
       {/* infinite-scroll sentinel */}
       <div ref={loadMoreRef} className="mt-6">
         {hasNextPage && isFetchingNextPage && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Array.from({ length: 3 }).map((_, idx) => (
               <Skeleton key={idx} className="h-40 w-full rounded-lg" />
             ))}
