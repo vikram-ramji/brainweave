@@ -1,20 +1,22 @@
-import { ApiResponse } from "@/types/ApiResponse";
-import { NotesApiData } from "@/types/NotesApi";
 import axios from "axios";
+import { NotesWithPagination } from "@/types/NotesApi";
 
-// The function that fetches a "page" (batch) of notes
-const fetchNotes = async ({
-  pageParam,
-}: {
+interface FetchNotesArgs {
   pageParam: string | null;
-}): Promise<NotesApiData> => {
-  const params = new URLSearchParams();
-  params.append("limit", "10");
-  if (pageParam) params.append("cursor", pageParam);
+}
 
-  const response: ApiResponse<NotesApiData> = await axios.get(`/api/notes?${params.toString()}`);
-  if (!response.success) throw new Error(response.message || "Failed to fetch notes");
-  return response.data as NotesApiData;
-};
+export default async function fetchNotes({
+  pageParam,
+}: FetchNotesArgs): Promise<NotesWithPagination> {
+  const query = pageParam ? `?cursor=${pageParam}` : "";
 
-export default fetchNotes;
+  const { data: response } = await axios.get(`/api/notes${query}`);
+
+  if (!response.success) {
+    throw new Error(response.message);
+  }
+
+  console.log("Fetched notes:", response.data);
+
+  return response.data;
+}

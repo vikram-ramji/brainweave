@@ -1,6 +1,8 @@
-export default function getLastUpdated(updatedAt: Date) {
+export default function getLastUpdated(updatedAt: Date | string) {
   const now = new Date();
-  const diff = now.getTime() - updatedAt.getTime();
+  const updatedAtDate =
+    typeof updatedAt === "string" ? new Date(updatedAt) : updatedAt;
+  const diff = now.getTime() - updatedAtDate.getTime();
 
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);

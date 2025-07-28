@@ -1,5 +1,3 @@
-// components/NotesList.tsx
-
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -9,20 +7,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NoteCard from "@/components/notes/NoteCard";
 import { Lightbulb } from "lucide-react";
 import fetchNotes from "@/helpers/fetchNotes";
+import Link from "next/link";
 
 export function NotesList() {
   const {
     data,
     error,
     fetchNextPage,
-    hasNextPage, // from useInfiniteQuery
+    hasNextPage,
     isFetchingNextPage,
     isLoading,
   } = useInfiniteQuery({
     queryKey: ["notes"],
     queryFn: fetchNotes,
     initialPageParam: null,
-    // tell React-Query when to stop paginating
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasNextPage
         ? lastPage.pagination.nextCursor
@@ -80,13 +78,15 @@ export function NotesList() {
     <div className="p-4 flex flex-col">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {notes.map((note) => (
-          <NoteCard
-            key={note.id}
-            note={note}
-            onNoteDelete={(id) => {
-              // TODO: update your cache here
-            }}
-          />
+          <Link key={note.id} href={`/note/${note.id}`}>
+            <NoteCard
+              key={note.id}
+              note={note}
+              onNoteDelete={() => {
+                // TODO: update your cache here
+              }}
+            />
+          </Link>
         ))}
       </div>
 

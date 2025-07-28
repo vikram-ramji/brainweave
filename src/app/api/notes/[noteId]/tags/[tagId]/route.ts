@@ -1,12 +1,13 @@
 import getServerSession from "@/app/lib/getServerSession";
 import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
 import { prisma } from "@/lib/db";
+import { NextRequest } from "next/server";
 
 async function validateRequest(params: { noteId: string; tagId: string }) {
   const session = await getServerSession();
 
   if (!session?.user?.id) {
-    return {error: ErrorResponse("Not Authenticated", 401)};
+    return { error: ErrorResponse("Not Authenticated", 401) };
   }
 
   const note = await prisma.note.findUnique({
@@ -14,7 +15,7 @@ async function validateRequest(params: { noteId: string; tagId: string }) {
   });
 
   if (!note) {
-    return {error: ErrorResponse("Note not found", 404)};
+    return { error: ErrorResponse("Note not found", 404) };
   }
 
   const tag = await prisma.tag.findUnique({
@@ -22,20 +23,23 @@ async function validateRequest(params: { noteId: string; tagId: string }) {
   });
 
   if (!tag) {
-    return {error: ErrorResponse("Tag not found", 404)};
+    return { error: ErrorResponse("Tag not found", 404) };
   }
 
   return { noteId: note.id, tagId: tag.id };
 }
 
-
-export async function POST({
-  params,
-}: {
-  params: { noteId: string; tagId: string };
-}) {
+export async function POST(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ noteId: string; tagId: string }>;
+  }
+) {
   try {
-    const validation = await validateRequest(params);
+    const resolvedParams = await params;
+    const validation = await validateRequest(resolvedParams);
     if (validation.error) {
       return validation.error;
     }
@@ -58,13 +62,17 @@ export async function POST({
   }
 }
 
-export async function DELETE({
-  params,
-}: {
-  params: { noteId: string; tagId: string };
-}) {
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ noteId: string; tagId: string }>;
+  }
+) {
   try {
-    const validation = await validateRequest(params);
+    const resolvedParams = await params;
+    const validation = await validateRequest(resolvedParams);
     if (validation.error) {
       return validation.error;
     }

@@ -20,10 +20,14 @@ export function AppHeader({
   session,
   withSubmitButton = false,
   isSubmitting = false,
+  hasChanged = false,
+  isCreateMode = false,
 }: {
   session: UserSession;
   withSubmitButton?: boolean;
   isSubmitting?: boolean;
+  hasChanged?: boolean;
+  isCreateMode?: boolean;
 }) {
   const userInitial = session.user.name.charAt(0).toUpperCase() || "U";
   const router = useRouter();
@@ -43,9 +47,18 @@ export function AppHeader({
             variant={"outline"}
             type="submit"
             form="note-create-form"
+            disabled={(!hasChanged && !isCreateMode) || isSubmitting}
             className="px-4 py-2 bg-background rounded transition-colors"
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting
+              ? isCreateMode
+                ? "Creating..."
+                : "Saving..."
+              : isCreateMode
+                ? "Create Note"
+                : hasChanged
+                  ? "Save"
+                  : "Saved"}
           </Button>
         )}
         {/* Mode Toggle */}
@@ -53,7 +66,10 @@ export function AppHeader({
         {/* User Avatar Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"outline"} className="w-10 h-10 rounded-full flex items-center justify-center">
+            <Button
+              variant={"outline"}
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+            >
               {userInitial}
             </Button>
           </DropdownMenuTrigger>

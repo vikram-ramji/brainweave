@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/app/AppHeader";
 import { NotesList } from "@/components/notes/NotesList";
+import getServerSession from "@/app/lib/getServerSession";
+import fetchNotes from "@/helpers/fetchNotes";
+import { InfiniteData } from "@tanstack/react-query";
+import { NotesWithPagination } from "@/types/NotesApi";
 
-export default async function Dashboard() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export default async function DashboardPage() {
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/sign-in");
@@ -15,8 +15,8 @@ export default async function Dashboard() {
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <AppHeader session={session} title="Dashboard" />
-      <NotesList />
+      <AppHeader session={session} />
+      <NotesList/>
     </div>
   );
 }

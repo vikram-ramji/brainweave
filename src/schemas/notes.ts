@@ -23,6 +23,7 @@ export const UpdateNoteSchema = z.object({
     .optional(),
   content: z.any().optional(),
   textContent: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export type UpdateNoteInput = z.infer<typeof UpdateNoteSchema>;

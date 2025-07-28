@@ -1,11 +1,18 @@
 import getServerSession from "@/app/lib/getServerSession";
-import { ErrorResponse, SuccessResponse, SuccessResponseWithData } from "@/helpers/ApiResponse";
+import {
+  ErrorResponse,
+  SuccessResponse,
+  SuccessResponseWithData,
+} from "@/helpers/ApiResponse";
 import { prisma } from "@/lib/db";
 import { UpdateNoteSchema } from "@/schemas/notes";
 import { NoteWithTags } from "@/types/NoteWithTags";
 import { NextRequest } from "next/server";
 
-export async function GET({ params }: { params: { noteId: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ noteId: string }> }
+) {
   try {
     const session = await getServerSession();
 
@@ -13,11 +20,13 @@ export async function GET({ params }: { params: { noteId: string } }) {
       return ErrorResponse("Not Authenticated", 401);
     }
 
+    const { noteId } = await params;
+
     const note = await prisma.note.findUnique({
-      where: { id: params.noteId, userId: session.user.id },
+      where: { id: noteId, userId: session.user.id },
       include: {
         tags: true,
-      }
+      },
     });
 
     if (!note) {
@@ -33,7 +42,7 @@ export async function GET({ params }: { params: { noteId: string } }) {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { noteId: string } }
+  { params }: { params: Promise<{ noteId: string }> }
 ) {
   try {
     const session = await getServerSession();
@@ -42,6 +51,7 @@ export async function PUT(
       return ErrorResponse("Not Authenticated", 401);
     }
 
+    const { noteId } = await params;
     const data = await request.json();
     const parsed = UpdateNoteSchema.safeParse(data);
     if (!parsed.success) {
@@ -51,7 +61,7 @@ export async function PUT(
     const { title, content } = parsed.data;
 
     const note = await prisma.note.update({
-      where: { id: params.noteId, userId: session.user.id },
+      where: { id: noteId, userId: session.user.id },
       data: {
         title,
         content,
@@ -68,7 +78,11 @@ export async function PUT(
   }
 }
 
-export async function DELETE({ params }: { params: { noteId: string } }) {
+export async function DELETE(request: NextRequest, {
+  params,
+}: {
+  params: Promise<{ noteId: string }>;
+}) {
   try {
     const session = await getServerSession();
 
@@ -76,8 +90,10 @@ export async function DELETE({ params }: { params: { noteId: string } }) {
       return ErrorResponse("Not Authenticated", 401);
     }
 
+    const { noteId } = await params;
+
     await prisma.note.delete({
-      where: { id: params.noteId, userId: session.user.id },
+      where: { id: noteId, userId: session.user.id },
     });
 
     return SuccessResponse("Note deleted successfully", 200);

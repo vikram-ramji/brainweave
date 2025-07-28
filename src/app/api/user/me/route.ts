@@ -1,36 +1,30 @@
-import { ErrorResponse, SuccessResponse } from "@/helpers/ApiResponse";
-import { auth } from "@/lib/auth";
+import getServerSession from "@/app/lib/getServerSession";
+import { ErrorResponse, SuccessResponseWithData } from "@/helpers/ApiResponse";
 import { prisma } from "@/lib/db";
-import { headers } from "next/headers";
 
-export async function GET () {
-    try {
-        const session = await auth.api.getSession({
-            headers: await headers(),
-        });
+export async function GET() {
+  try {
+    const session = await getServerSession();
 
-        if (!session?.user?.id) {
-            return ErrorResponse("Not Authenticated", 401);
-        }
-
-        const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
-
-        if (!user) {
-            return ErrorResponse("User not found", 404);
-        }
-
-        return SuccessResponse("User fetched successfully", 200, user);
-    } catch (error) {
-        console.error("Failed to fetch user data:", error);
-        return ErrorResponse("Failed to fetch user data, try again!", 500);
+    if (!session?.user?.id) {
+      return ErrorResponse("Not Authenticated", 401);
     }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: {
+        notes: true,
+        tags: true, // Include related data and counts if needed
+      },
+    });
+
+    if (!user) {
+      return ErrorResponse("User not found", 404);
+    }
+
+    return SuccessResponseWithData(user, "User fetched successfully");
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+    return ErrorResponse("Failed to fetch user data, try again!", 500);
+  }
 }

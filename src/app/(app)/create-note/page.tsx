@@ -1,14 +1,9 @@
-import { AppHeader } from "@/components/app/AppHeader";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import NoteCreateForm from "@/components/notes/NoteCreateForm";
+import getServerSession from "@/app/lib/getServerSession";
 
-export default async function CreateNote() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+export default async function CreateNotePage() {
+  const session = await getServerSession();
   if (!session) {
     redirect("/sign-in");
   }
