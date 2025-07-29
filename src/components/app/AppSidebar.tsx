@@ -46,7 +46,7 @@ export function AppSidebar() {
                   href={item.href}
                   className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-sidebar-hover"
                 >
-                  <item.icon className="size-5 text-sidebar-primary-foreground" />
+                  <item.icon className="size-5 text-sidebar-foreground" />
                   <span className="font-medium text-base">{item.label}</span>
                 </Link>
               </SidebarMenuButton>
