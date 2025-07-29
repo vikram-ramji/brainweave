@@ -48,7 +48,8 @@ export default function NoteCreateForm({ session }: { session: UserSession }) {
 
       if (response.success) {
         toast.success("Note created successfully!");
-        router.push(`/note/${response.data.id}`);
+        router.push(`/dashboard`);
+        router.refresh();
       } else {
         toast.error("Failed to create note");
       }
