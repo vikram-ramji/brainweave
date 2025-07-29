@@ -9,6 +9,7 @@ import { ApiDataResponse } from "@/types/ApiResponse";
 import { TagWithNotes } from "@/types/TagWithNotes";
 import { NotesGrid } from "../notes/NotesGrid";
 import { Tag } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TagContent({
   tagName,
@@ -19,6 +20,7 @@ export default function TagContent({
 }) {
   const [tag, setTag] = useState<TagWithNotes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchTag = async () => {
@@ -53,6 +55,9 @@ export default function TagContent({
         },
       });
     }
+
+    // Invalidate React Query cache to ensure dashboard and other pages are updated
+    queryClient.invalidateQueries({ queryKey: ["notes"] });
   };
 
   return (
