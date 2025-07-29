@@ -58,13 +58,14 @@ export async function PUT(
       return ErrorResponse("Invalid Title or content");
     }
 
-    const { title, content, tagIds } = parsed.data;
+    const { title, content, tagIds, textContent } = parsed.data;
 
     const note = await prisma.note.update({
       where: { id: noteId, userId: session.user.id },
       data: {
         title,
         content,
+        textContent,
         tags: {
           set: tagIds?.map((tagId) => ({ id: tagId })),
         },
@@ -81,11 +82,14 @@ export async function PUT(
   }
 }
 
-export async function DELETE(request: NextRequest, {
-  params,
-}: {
-  params: Promise<{ noteId: string }>;
-}) {
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ noteId: string }>;
+  }
+) {
   try {
     const session = await getServerSession();
 

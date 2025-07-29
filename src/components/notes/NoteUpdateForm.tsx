@@ -17,6 +17,7 @@ import { Tag } from "@/generated/prisma";
 import { useTagManagement } from "@/hooks/use-tag-management";
 import { TagManager } from "./TagManager";
 import { NoteTitleField } from "./NoteTitleField";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function NoteForm({
   session,
@@ -29,6 +30,7 @@ export default function NoteForm({
   const [hasChanged, setHasChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const register = useForm<UpdateNoteInput>({
     resolver: zodResolver(UpdateNoteSchema),
@@ -105,7 +107,7 @@ export default function NoteForm({
       if (response.success) {
         toast.success("Note Updated successfully!");
         router.push(`/dashboard`);
-        router.refresh();
+        queryClient.invalidateQueries({ queryKey: ["notes"] });
       } else {
         toast.error("Failed to Update note");
       }

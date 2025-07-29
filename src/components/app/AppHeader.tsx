@@ -52,7 +52,7 @@ export function AppHeader({
           </Button>
         )}
         <ModeToggle />
-        <UserAvatarDropdown userInitial={userInitial} />
+        <UserAvatarDropdown session={session} userInitial={userInitial} />
       </div>
     </header>
   );

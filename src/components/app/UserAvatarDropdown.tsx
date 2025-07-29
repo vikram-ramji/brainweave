@@ -10,11 +10,15 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { UserSession } from "@/types/UserSession";
+import Image from "next/image";
 
 export default function UserAvatarDropdown({
   userInitial,
+  session,
 }: {
   userInitial: string;
+  session: UserSession;
 }) {
   const router = useRouter();
   return (
@@ -22,9 +26,19 @@ export default function UserAvatarDropdown({
       <DropdownMenuTrigger asChild>
         <Button
           variant={"outline"}
-          className="w-10 h-10 rounded-full flex items-center justify-center"
+          className="w-10 h-10 rounded-full flex items-center justify-center p-0"
         >
-          {userInitial}
+          {session.user.image ? (
+            <Image
+              src={session.user.image}
+              alt="User Avatar"
+              width={10}
+              height={10}
+              className="rounded-full w-full h-full object-cover"
+            />
+          ) : (
+            <span>{userInitial}</span>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

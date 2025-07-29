@@ -56,7 +56,6 @@ export default function TagContent({
       });
     }
 
-    // Invalidate React Query cache to ensure dashboard and other pages are updated
     queryClient.invalidateQueries({ queryKey: ["notes"] });
   };
 

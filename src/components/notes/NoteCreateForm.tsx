@@ -16,10 +16,12 @@ import { AppHeader } from "../app/AppHeader";
 import { useTagManagement } from "@/hooks/use-tag-management";
 import { TagManager } from "./TagManager";
 import { NoteTitleField } from "./NoteTitleField";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function NoteCreateForm({ session }: { session: UserSession }) {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const register = useForm<CreateNoteInput>({
     resolver: zodResolver(CreateNoteSchema),
@@ -49,7 +51,7 @@ export default function NoteCreateForm({ session }: { session: UserSession }) {
       if (response.success) {
         toast.success("Note created successfully!");
         router.push(`/dashboard`);
-        router.refresh();
+        queryClient.invalidateQueries({ queryKey: ["notes"] });
       } else {
         toast.error("Failed to create note");
       }
