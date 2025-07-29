@@ -104,7 +104,8 @@ export default function NoteForm({
 
       if (response.success) {
         toast.success("Note Updated successfully!");
-        router.push(`/note/${response.data.id}`);
+        router.push(`/dashboard`);
+        router.refresh();
       } else {
         toast.error("Failed to Update note");
       }
