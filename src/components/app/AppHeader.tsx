@@ -4,7 +4,6 @@ import { ModeToggle } from "./ModeToggle";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { UserSession } from "@/types/UserSession";
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import UserAvatarDropdown from "./UserAvatarDropdown";
 
@@ -22,7 +21,6 @@ export function AppHeader({
   isCreateMode?: boolean;
 }) {
   const userInitial = session.user.name.charAt(0).toUpperCase() || "U";
-  const router = useRouter();
 
   return (
     <header className="flex justify-between items-center p-2 border-b sticky top-0 z-20 bg-background">

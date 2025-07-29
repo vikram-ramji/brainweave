@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  InfiniteData,
+} from "@tanstack/react-query";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, Search } from "lucide-react";
 import fetchNotes from "@/helpers/fetchNotes";
 import { NotesGrid } from "./NotesGrid";
+import { NotesWithPagination } from "@/types/NotesApi";
 
 export function NotesList({ searchQuery }: { searchQuery: string }) {
   const queryClient = useQueryClient();
@@ -43,17 +48,20 @@ export function NotesList({ searchQuery }: { searchQuery: string }) {
 
   const handleNoteDelete = (noteId: string) => {
     // Update the cache by removing the deleted note from all pages
-    queryClient.setQueryData(["notes", searchQuery], (oldData: any) => {
-      if (!oldData) return oldData;
+    queryClient.setQueryData<InfiniteData<NotesWithPagination>>(
+      ["notes", searchQuery],
+      (oldData) => {
+        if (!oldData) return oldData;
 
-      return {
-        ...oldData,
-        pages: oldData.pages.map((page: any) => ({
-          ...page,
-          notes: page.notes.filter((note: any) => note.id !== noteId),
-        })),
-      };
-    });
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            notes: page.notes.filter((note) => note.id !== noteId),
+          })),
+        };
+      }
+    );
   };
 
   // Error state
@@ -105,7 +113,7 @@ export function NotesList({ searchQuery }: { searchQuery: string }) {
           <div className="flex flex-col items-center justify-center py-8">
             <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
             <p className="text-sm text-muted-foreground font-medium">
-              All caught up! You've viewed all your notes.
+              All caught up! You&apos;ve viewed all your notes.
             </p>
           </div>
         )}

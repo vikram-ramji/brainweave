@@ -4,7 +4,7 @@ import { CreateNoteInput, CreateNoteSchema } from "@/schemas/notes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,14 +35,11 @@ export default function NoteCreateForm({ session }: { session: UserSession }) {
     form: register,
   });
 
-  // Fetch tags on component mount - wrap in useCallback to avoid dependency issues
-  const initializeTags = useCallback(() => {
-    tagManagement.fetchTags();
-  }, [tagManagement.fetchTags]);
-
+  // Fetch tags on component mount
   useEffect(() => {
-    initializeTags();
-  }, [initializeTags]);
+    tagManagement.fetchTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tagManagement.fetchTags]);
 
   const onSubmit = async (inputData: z.infer<typeof CreateNoteSchema>) => {
     setIsSubmitting(true);

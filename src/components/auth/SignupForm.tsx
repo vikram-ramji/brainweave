@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import AuthCard from "./AuthCard";
 import { useRouter } from "next/navigation";
@@ -8,7 +7,6 @@ import { SignupSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -25,7 +23,7 @@ import { useFormSubmission } from "@/hooks/use-form-submission";
 
 export default function SignupForm() {
   const router = useRouter();
-  const { isSubmitting, setIsSubmitting, handleSubmit } = useFormSubmission({
+  const { isSubmitting, handleSubmit } = useFormSubmission({
     successMessage:
       "Signup successful! Please check your email for verification.",
     errorMessage: "Signup failed",
@@ -45,12 +43,18 @@ export default function SignupForm() {
   const onSubmit = async (inputData: z.infer<typeof SignupSchema>) => {
     await handleSubmit(
       async () => {
-        return await authClient.signUp.email({
+        const result = await authClient.signUp.email({
           name: `${inputData.firstName} ${inputData.lastName}`,
           email: inputData.email,
           password: inputData.password,
           callbackURL: "/dashboard",
         });
+
+        if (result.error) {
+          throw new Error(result.error.message);
+        }
+
+        return;
       },
       () => {
         router.replace(`/verify?email=${inputData.email}`);

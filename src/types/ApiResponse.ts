@@ -1,9 +1,9 @@
-export interface ApiResponse<T = any> {
+export interface ApiResponse {
   success: boolean;
   status: number;
   message: string;
 }
 
-export interface ApiDataResponse<T> extends ApiResponse<T> {
+export interface ApiDataResponse<T> extends ApiResponse {
   data: T;
 }

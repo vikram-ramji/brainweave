@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tiptap/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -61,41 +61,38 @@ export default function NoteForm({
           );
         }) || [];
 
-  const fetchData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      // Fetch both note and tags in parallel
-      const [noteResponse, tagsResponse] = await Promise.all([
-        axios.get(`/api/notes/${noteId}`),
-        axios.get("/api/tags"),
-      ]);
-
-      if (noteResponse.data.success) {
-        const noteData = noteResponse.data.data;
-
-        // Transform the note data to extract tagIds from tags array
-        const formData = {
-          ...noteData,
-          tagIds: noteData.tags?.map((tag: Tag) => tag.id) || [],
-        };
-
-        register.reset(formData);
-      }
-
-      if (tagsResponse.data.success) {
-        tagManagement.setAvailableTags(tagsResponse.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to load note or tags");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [noteId, register, tagManagement.setAvailableTags]);
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        // Fetch both note and tags in parallel
+        const [noteResponse] = await Promise.all([
+          axios.get(`/api/notes/${noteId}`),
+          tagManagement.fetchTags(),
+        ]);
+
+        if (noteResponse.data.success) {
+          const noteData = noteResponse.data.data;
+
+          // Transform the note data to extract tagIds from tags array
+          const formData = {
+            ...noteData,
+            tagIds: noteData.tags?.map((tag: Tag) => tag.id) || [],
+          };
+
+          register.reset(formData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load note or tags");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, [fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteId, register, tagManagement.fetchTags]);
 
   const onSubmit = async (inputData: z.infer<typeof UpdateNoteSchema>) => {
     setIsSubmitting(true);

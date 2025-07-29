@@ -32,7 +32,7 @@ export default function TagContent({
         } else {
           toast.error(response.message);
         }
-      } catch (error) {
+      } catch {
         toast.error("Failed to fetch tag details");
       } finally {
         setIsLoading(false);
@@ -64,7 +64,7 @@ export default function TagContent({
           {tag && (
             <p className="text-muted-foreground mt-1">
               {tag._count.notes} note{tag._count.notes === 1 ? "" : "s"} tagged
-              with "{tagName}"
+              with &quot;{tagName}&quot;
             </p>
           )}
         </div>
@@ -77,7 +77,7 @@ export default function TagContent({
           emptyState={{
             icon: Tag,
             title: "No notes found",
-            description: `No notes are currently tagged with "${tagName}".`,
+            description: `No notes are currently tagged with &quot;${tagName}&quot;.`,
             subtitle: "Create a note and add this tag to see it here.",
           }}
         />

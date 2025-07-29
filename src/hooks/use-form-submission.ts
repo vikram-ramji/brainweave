@@ -6,11 +6,17 @@ interface UseFormSubmissionOptions {
   errorMessage?: string;
 }
 
+interface SubmitResult {
+  error?: {
+    message: string;
+  };
+}
+
 export function useFormSubmission(options: UseFormSubmissionOptions = {}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (
-    submitFn: () => Promise<any>,
+    submitFn: () => Promise<SubmitResult | void>,
     onSuccess?: () => void
   ) => {
     setIsSubmitting(true);
@@ -32,7 +38,7 @@ export function useFormSubmission(options: UseFormSubmissionOptions = {}) {
       if (onSuccess) {
         onSuccess();
       }
-    } catch (error) {
+    } catch {
       toast.error(options.errorMessage || "Operation failed:", {
         description: "An unexpected error occurred",
       });

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { UseFormReturn } from "react-hook-form";
 
 interface UseTagManagementProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   onTagChange?: () => void;
 }

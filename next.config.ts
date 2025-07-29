@@ -5,5 +5,3 @@ const nextConfig: NextConfig = {
     useCache: true,
   }
 };
-
-export default nextConfig;

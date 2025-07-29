@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 import AuthLayout from "./AuthLayout";
 import AuthCard from "./AuthCard";
 import { authClient } from "@/lib/auth-client";
@@ -18,7 +17,6 @@ import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { SigninSchema } from "@/schemas/auth";
 import GithubAuthButton from "./GithubAuthButton";
 import GoogleAuthButton from "./GoogleAuthButton";

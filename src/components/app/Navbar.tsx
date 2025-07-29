@@ -1,15 +1,11 @@
 "use client";
 import Logo from "@/assets/logo";
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { ModeToggle } from "./ModeToggle";
 
 export default function Navbar() {
-  const router = useRouter();
 
   return (
     <nav className="p-2 sticky top-0 w-full border-b">
