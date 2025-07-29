@@ -58,13 +58,16 @@ export async function PUT(
       return ErrorResponse("Invalid Title or content");
     }
 
-    const { title, content } = parsed.data;
+    const { title, content, tagIds } = parsed.data;
 
     const note = await prisma.note.update({
       where: { id: noteId, userId: session.user.id },
       data: {
         title,
         content,
+        tags: {
+          set: tagIds?.map((tagId) => ({ id: tagId })),
+        },
       },
       include: {
         tags: true,

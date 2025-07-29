@@ -38,9 +38,9 @@ export function AppHeader({
           <Button
             variant={"outline"}
             type="submit"
-            form="note-create-form"
-            disabled={(!hasChanged && !isCreateMode) || isSubmitting}
-            className="px-4 py-2 bg-background rounded transition-colors"
+            form={isCreateMode ? "note-create-form" : "note-form"}
+            disabled={!hasChanged|| isSubmitting}
+            className="px-4 py-2 bg-background rounded transition-colors cursor-pointer"
           >
             {isSubmitting
               ? isCreateMode

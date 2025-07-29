@@ -34,19 +34,29 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession();
 
     if (!session?.user?.id) {
       return ErrorResponse("Not Authenticated", 401);
     }
-
+    // Return tags with notes count only
     const tags = await prisma.tag.findMany({
       where: { userId: session.user.id },
+      include: {
+        _count: {
+          select: {
+            notes: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
     });
 
-    return SuccessResponseWithData<Tag[]>(tags);
+    return SuccessResponseWithData(tags);
   } catch (error) {
     console.error("Failed to fetch tags:", error);
     return ErrorResponse("Failed to fetch tags, try again!", 500);

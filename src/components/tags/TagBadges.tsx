@@ -1,27 +1,33 @@
 import Link from "next/link";
 import { Tag } from "@/generated/prisma";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Edit2, Trash2 } from "lucide-react";
+
+type TagWithCount = Tag & {
+  _count?: {
+    notes: number;
+  };
+};
 
 interface TagBadgesProps {
-  tags: Tag[];
-  asLink?: boolean;
+  tags: TagWithCount[];
   limit?: number;
-  onEdit?: (tag: Tag) => void;
-  onDelete?: (tag: Tag) => void;
+  onEdit?: (tag: TagWithCount) => void;
+  onDelete?: (tag: TagWithCount) => void;
+  showCount?: boolean;
+  highlightTagId?: string; // ID of tag to highlight as primary
+  disableLinks?: boolean; // Disable links to prevent nested anchor tags
 }
 
 export default function TagBadges({
   tags,
-  asLink = false,
   limit,
   onEdit,
   onDelete,
+  showCount = false,
+  highlightTagId,
+  disableLinks = false,
 }: TagBadgesProps) {
   const total = tags.length;
   const displayTags = limit != null ? tags.slice(0, limit) : tags;
@@ -30,45 +36,96 @@ export default function TagBadges({
   return (
     <div className="flex flex-wrap gap-2">
       {displayTags.map((tag) => {
-        const badge = <Badge key={tag.id}>{tag.name}</Badge>;
+        const badgeText =
+          showCount && tag._count?.notes !== undefined
+            ? `${tag.name} (${tag._count.notes})`
+            : tag.name;
 
-        // if neither link nor actions, just render badge
-        if (!asLink && !onEdit && !onDelete) {
-          return badge;
-        }
+        const isHighlighted = highlightTagId && tag.id === highlightTagId;
+        const badgeVariant = isHighlighted ? "default" : "secondary";
 
-        // build wrapped content
-        let content: React.ReactNode = badge;
-        if (asLink) {
-          content = (
-            <Link href={`/tag/${tag.name}`} key={tag.id}>
-              {badge}
+        // If no edit/delete actions, render as simple link or badge
+        if (!onEdit && !onDelete) {
+          const badgeElement = (
+            <Badge
+              variant={badgeVariant}
+              className={`transition-colors text-xs ${
+                disableLinks
+                  ? "cursor-default"
+                  : "cursor-pointer hover:bg-primary/90"
+              }`}
+            >
+              {badgeText}
+            </Badge>
+          );
+
+          return disableLinks ? (
+            <div key={tag.id}>{badgeElement}</div>
+          ) : (
+            <Link key={tag.id} href={`/tags/${encodeURIComponent(tag.name)}`}>
+              {badgeElement}
             </Link>
           );
         }
 
-        // if we have edit/delete hooks, wrap in a dropdown
-        if (onEdit || onDelete) {
-          return (
-            <DropdownMenu key={tag.id}>
-              <DropdownMenuTrigger asChild>{content}</DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {onEdit && (
-                  <DropdownMenuItem onClick={() => onEdit(tag)}>
-                    Edit
-                  </DropdownMenuItem>
-                )}
-                {onDelete && (
-                  <DropdownMenuItem onClick={() => onDelete(tag)}>
-                    Delete
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        }
+        // Render with hover actions for edit/delete
+        return (
+          <div key={tag.id} className="relative group">
+            {disableLinks ? (
+              <Badge
+                variant={badgeVariant}
+                className="cursor-default transition-colors pr-12 text-xs"
+              >
+                {badgeText}
+              </Badge>
+            ) : (
+              <Link href={`/tags/${encodeURIComponent(tag.name)}`}>
+                <Badge
+                  variant={badgeVariant}
+                  className="cursor-pointer hover:bg-muted-foreground transition-colors pr-12 text-xs"
+                >
+                  {badgeText}
+                </Badge>
+              </Link>
+            )}
 
-        return content;
+            {/* Hover actions */}
+            <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-0.5 bg-background/80 backdrop-blur-sm rounded px-1">
+              {onEdit && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0 hover:bg-secondary hover:text-foreground"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onEdit(tag);
+                  }}
+                  title="Edit tag"
+                >
+                  <Edit2 className="h-3 w-3" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDelete(tag);
+                  }}
+                  title="Delete tag"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  <span className="sr-only">Delete</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        );
       })}
 
       {remaining > 0 && <Badge key="more">+{remaining}</Badge>}

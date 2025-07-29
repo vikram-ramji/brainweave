@@ -71,7 +71,6 @@ export default function NoteForm({
       ]);
 
       if (noteResponse.data.success) {
-        console.log("Fetched note:", noteResponse.data.data);
         const noteData = noteResponse.data.data;
 
         // Transform the note data to extract tagIds from tags array

@@ -86,7 +86,7 @@ export default function NoteCard({ note, onNoteDelete }: NoteCardProps) {
           </p>
         </CardContent>
         <CardFooter>
-          <TagBadges tags={note.tags} limit={3} />
+          <TagBadges tags={note.tags} limit={3} disableLinks={true} />
         </CardFooter>
       </Card>
     </Link>
