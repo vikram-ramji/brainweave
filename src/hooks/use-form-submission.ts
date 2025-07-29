@@ -9,14 +9,14 @@ interface UseFormSubmissionOptions {
 interface SubmitResult {
   error?: {
     message: string;
-  };
+  } | null;
 }
 
 export function useFormSubmission(options: UseFormSubmissionOptions = {}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (
-    submitFn: () => Promise<SubmitResult | void>,
+    submitFn: () => Promise<SubmitResult | void | unknown>,
     onSuccess?: () => void
   ) => {
     setIsSubmitting(true);
@@ -24,9 +24,16 @@ export function useFormSubmission(options: UseFormSubmissionOptions = {}) {
     try {
       const result = await submitFn();
 
-      if (result?.error) {
+      if (
+        result &&
+        typeof result === "object" &&
+        "error" in result &&
+        result.error &&
+        typeof result.error === "object" &&
+        "message" in result.error
+      ) {
         toast.error(options.errorMessage || "Operation failed:", {
-          description: result.error.message,
+          description: (result.error as { message: string }).message,
         });
         return;
       }
