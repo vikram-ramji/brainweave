@@ -1,11 +1,11 @@
-import Link from 'next/link';
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
 type AuthFooterProps = {
   href: string;
   text: string;
   linkText: string;
-}
+};
 
 export default function AuthFooter({ href, text, linkText }: AuthFooterProps) {
   return (

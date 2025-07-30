@@ -1,16 +1,8 @@
 import Navbar from "@/components/app/Navbar";
-import getServerSession from "./lib/getServerSession";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
-  const session = await getServerSession();
-  if (session) {
-    redirect("/dashboard");
-  }
-
-  // If the user is not logged in, render the landing page.
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
