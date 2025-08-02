@@ -18,6 +18,8 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
+import FormDivider from "./FormDivider";
+import SocialAuthButtons from "./SocialAuthButtons";
 
 const SignInSchema = z.object({
   email: z
@@ -109,29 +111,8 @@ export default function SignInForm() {
           <Button disabled={pending} type="submit" className="w-full">
             Sign In
           </Button>
-          <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-            <span className="bg-background text-muted-foreground relative z-10 px-2">
-              Or continue with
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              variant="outline"
-              disabled={pending}
-              type="button"
-              className="w-full"
-            >
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              disabled={pending}
-              type="button"
-              className="w-full"
-            >
-              GitHub
-            </Button>
-          </div>
+          <FormDivider text="Or continue with" />
+          <SocialAuthButtons pending={pending} />
         </div>
       </form>
     </Form>

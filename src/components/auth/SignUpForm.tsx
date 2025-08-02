@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -18,6 +18,8 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
+import SocialAuthButtons from "./SocialAuthButtons";
+import FormDivider from "./FormDivider";
 
 const SignUpSchema = z
   .object({
@@ -27,17 +29,7 @@ const SignUpSchema = z
       .email("Please enter a valid email address")
       .trim()
       .min(1, "Email is required"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long")
-      .max(128, "Password must be less than 128 characters")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character"
-      ),
+    password: z.string().min(1, "Password is required"),
     confirmPassword: z.string().min(1, "Confirm Password is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -89,29 +81,8 @@ export default function SignUpForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 md:p-6">
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              variant="outline"
-              disabled={pending}
-              type="button"
-              className="w-full"
-            >
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              disabled={pending}
-              type="button"
-              className="w-full"
-            >
-              GitHub
-            </Button>
-          </div>
-          <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-            <span className="bg-background text-muted-foreground relative z-10 px-2">
-              Or Sign up with Email
-            </span>
-          </div>
+          <SocialAuthButtons pending={pending} />
+          <FormDivider text="Or Sign up with Email" />
           <div className="grid md:grid-cols-2 gap-3">
             <FormField
               control={form.control}
