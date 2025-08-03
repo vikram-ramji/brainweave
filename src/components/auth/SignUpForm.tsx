@@ -15,21 +15,30 @@ import { Input } from "../ui/input";
 import { Alert, AlertTitle } from "../ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
 import SocialAuthButtons from "./SocialAuthButtons";
 import FormDivider from "./FormDivider";
+import { useRouter } from "next/navigation";
 
 const SignUpSchema = z
   .object({
-    firstName: z.string().trim().min(1, "First Name is required"),
-    lastName: z.string().trim().min(1, "Last Name is required"),
+    name: z.string().min(1, "Name is required"),
     email: z
       .email("Please enter a valid email address")
       .trim()
       .min(1, "Email is required"),
-    password: z.string().min(1, "Password is required"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .max(128, "Password must be less than 128 characters")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[^a-zA-Z0-9]/,
+        "Password must contain at least one special character"
+      ),
     confirmPassword: z.string().min(1, "Confirm Password is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -45,8 +54,7 @@ export default function SignUpForm() {
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -59,15 +67,18 @@ export default function SignUpForm() {
 
     authClient.signUp.email(
       {
-        name: `${data.firstName} ${data.lastName}`,
+        name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/dashboard",
       },
       {
         onSuccess: () => {
           setPending(false);
-          toast.success("Signed up successfully!");
-          router.replace("/dashboard");
+          toast.success(
+            `Email verification sent to ${data.email}! Please check your inbox.`
+          );
+          router.push("/verify-email");
         },
         onError: ({ error }) => {
           setPending(false);
@@ -83,28 +94,15 @@ export default function SignUpForm() {
         <div className="flex flex-col gap-6">
           <SocialAuthButtons pending={pending} />
           <FormDivider text="Or Sign up with Email" />
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid gap-3">
             <FormField
               control={form.control}
-              name="firstName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="John" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="Doe" {...field} />
+                    <Input type="text" placeholder="John Doe" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
