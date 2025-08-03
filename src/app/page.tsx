@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/authClient";
+import { authClient } from "@/modules/auth/lib/authClient";
 
 export default function Home() {
   const { data: session } = authClient.useSession();

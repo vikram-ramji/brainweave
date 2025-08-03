@@ -1,8 +1,6 @@
 import VerificationEmailTemplate from "@/components/emails/EmailVerification";
+import resend from "@/lib/resend";
 import { User } from "better-auth";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendVerificationEmail({
   user,

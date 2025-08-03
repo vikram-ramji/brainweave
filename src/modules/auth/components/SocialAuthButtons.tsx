@@ -1,7 +1,7 @@
-import React from 'react'
-import { Button } from '../ui/button';
-import { authClient } from '@/lib/authClient';
-import {FaGoogle, FaGithub} from 'react-icons/fa';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/modules/auth/lib/authClient";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 export default function SocialAuthButtons({ pending }: { pending: boolean }) {
   return (
@@ -10,9 +10,9 @@ export default function SocialAuthButtons({ pending }: { pending: boolean }) {
         disabled={pending}
         onClick={() => {
           authClient.signIn.social({
-            provider: 'google',
-            callbackURL: "/"
-          })
+            provider: "google",
+            callbackURL: "/",
+          });
         }}
         variant="outline"
         type="button"
@@ -24,9 +24,9 @@ export default function SocialAuthButtons({ pending }: { pending: boolean }) {
         disabled={pending}
         onClick={() => {
           authClient.signIn.social({
-            provider: 'github',
-            callbackURL: "/"
-          })
+            provider: "github",
+            callbackURL: "/",
+          });
         }}
         variant="outline"
         type="button"
