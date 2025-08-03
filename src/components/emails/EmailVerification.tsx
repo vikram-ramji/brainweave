@@ -44,7 +44,7 @@ export const VerificationEmailTemplate = ({
         <Heading style={heading}>Welcome, {name}!</Heading>
 
         <Text style={paragraph}>
-          Thank you for joining BrainWeave! We're excited to help you start
+          Thank you for joining BrainWeave! We&apos;re excited to help you start
           weaving your thoughts together.
         </Text>
 
@@ -60,8 +60,8 @@ export const VerificationEmailTemplate = ({
         </Section>
 
         <Text style={smallText}>
-          If the button doesn't work, you can also copy and paste this link into
-          your browser:
+          If the button doesn&apos;t work, you can also copy and paste this link
+          into your browser:
         </Text>
 
         <Link href={url} style={linkText}>
@@ -77,8 +77,8 @@ export const VerificationEmailTemplate = ({
         </Text>
 
         <Text style={disclaimer}>
-          If you didn't create a BrainWeave account, you can safely ignore this
-          email.
+          If you didn&apos;t create a BrainWeave account, you can safely ignore
+          this email.
         </Text>
       </Container>
     </Body>

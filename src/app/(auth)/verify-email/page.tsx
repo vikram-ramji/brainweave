@@ -25,15 +25,15 @@ export default async function VerifyEmailPage() {
         <div className="space-y-2">
           <h2 className="text-xl font-semibold">Check Your Email</h2>
           <p className="text-muted-foreground text-sm">
-            We've sent a verification link to your email address. Please check
-            your inbox and click the link to verify your account.
+            We&apos;ve sent a verification link to your email address. Please
+            check your inbox and click the link to verify your account.
           </p>
         </div>
 
         <div className="bg-muted/50 p-4 rounded-lg">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Mail className="h-4 w-4" />
-            <span>Didn't receive the email? Check your spam folder.</span>
+            <span>Didn&apos;t receive the email? Check your spam folder.</span>
           </div>
         </div>
         {/* TODO: Add resend email functionality */}

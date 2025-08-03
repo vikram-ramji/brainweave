@@ -23,7 +23,7 @@ export async function sendVerificationEmail({
       status: 200,
       message: "Verification email sent successfully",
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       status: 500,
