@@ -15,7 +15,6 @@ import { Input } from "../ui/input";
 import { Alert, AlertTitle } from "../ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
 import FormDivider from "./FormDivider";
@@ -29,7 +28,6 @@ const SignInSchema = z.object({
 });
 
 export default function SignInForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -49,12 +47,12 @@ export default function SignInForm() {
       {
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false);
           toast.success("Signed in successfully!");
-          router.replace("/dashboard");
         },
         onError: ({ error }) => {
           setPending(false);
