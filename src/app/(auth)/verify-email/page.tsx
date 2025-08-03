@@ -1,6 +1,6 @@
-import AuthCard from "@/components/auth/AuthCard";
+import AuthCard from "@/modules/auth/components/AuthCard";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
+import { auth } from "@/modules/auth/lib/auth";
 import { CheckCircle, Mail } from "lucide-react";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";

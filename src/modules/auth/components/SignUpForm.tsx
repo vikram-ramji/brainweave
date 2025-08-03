@@ -7,15 +7,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../ui/input";
-import { Alert, AlertTitle } from "../ui/alert";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
-import { Button } from "../ui/button";
-import { authClient } from "@/lib/authClient";
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/modules/auth/lib/authClient";
 import { toast } from "sonner";
 import SocialAuthButtons from "./SocialAuthButtons";
 import FormDivider from "./FormDivider";
