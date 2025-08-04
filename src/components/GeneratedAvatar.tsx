@@ -1,8 +1,7 @@
 import { createAvatar } from "@dicebear/core"
 import { botttsNeutral, loreleiNeutral } from "@dicebear/collection";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { AvatarImage } from "@radix-ui/react-avatar";
 
 interface GeneratedAvatarProps {
     seed: string;
