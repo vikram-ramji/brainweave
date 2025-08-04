@@ -1,36 +1,35 @@
-import { createAvatar } from "@dicebear/core"
-import * as botttsNeutral from "@dicebear/bottts-neutral"
+import { createAvatar } from "@dicebear/core";
+import * as botttsNeutral from "@dicebear/bottts-neutral";
 import * as loreleiNeutral from "@dicebear/lorelei-neutral";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { AvatarImage } from "@radix-ui/react-avatar";
 
 interface GeneratedAvatarProps {
-    seed: string;
-    className?: string;
-    variant: "botttsNeutral" | "loreleiNeutral"
+  seed: string;
+  className?: string;
+  variant: "botttsNeutral" | "loreleiNeutral";
 }
 
 export default function GeneratedAvatar({
-    seed,
-    className,
-    variant
+  seed,
+  className,
+  variant,
 }: GeneratedAvatarProps) {
-    let avatar;
+  let avatar;
   if (variant === "botttsNeutral") {
     avatar = createAvatar(botttsNeutral, {
-        seed
-    })
+      seed,
+    });
   } else {
     avatar = createAvatar(loreleiNeutral, {
-        seed
-    })
+      seed,
+    });
   }
 
   return (
     <Avatar className={cn(className)}>
-        <AvatarImage src={avatar.toDataUri()} />
-        <AvatarFallback>{seed.charAt(0).toUpperCase()}</AvatarFallback>
+      <AvatarImage src={avatar.toDataUri()} />
+      <AvatarFallback>{seed.charAt(0).toUpperCase()}</AvatarFallback>
     </Avatar>
-  )
+  );
 }
