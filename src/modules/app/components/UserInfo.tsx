@@ -1,5 +1,5 @@
 import GeneratedAvatar from "@/components/GeneratedAvatar";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "better-auth";
 
 export default function UserInfo({ user }: { user: User }) {
@@ -26,4 +26,5 @@ export default function UserInfo({ user }: { user: User }) {
         </span>
       </div>
     </div>
+  );
 }
