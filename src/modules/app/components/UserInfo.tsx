@@ -8,12 +8,15 @@ export default function UserInfo({ user }: { user: User }) {
       {user.image ? (
         <Avatar>
           <AvatarImage src={user.image} alt={user.name || "User Avatar"} />
+          <AvatarFallback>
+            {(user.name || "U").charAt(0).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
       ) : (
         <GeneratedAvatar
-          seed={user.name}
+          seed={user.name || "anonymous"}
           variant="loreleiNeutral"
-          className="size-9 mr-3"
+          className="size-9"
         />
       )}
       <div className="flex flex-col gap-0.5 text-left overflow-hidden flex-1 min-w-0">
