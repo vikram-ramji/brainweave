@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,7 +11,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Files, Home, PlusCircle } from "lucide-react";
 import Logo from "@/../public/logo.svg";
@@ -30,10 +29,10 @@ const items = [
     href: "/notes",
     icon: Files,
   },
-]
+];
 
 export default function AppSidebar() {
-  const pathName = usePathname()
+  const pathName = usePathname();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -61,13 +60,14 @@ export default function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              { items.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton asChild className="mt-1" isActive={pathName === item.href}>
-                    <Link
-                      href={item.href}
-                      className="flex items-center pl-4"
-                    >
+                  <SidebarMenuButton
+                    asChild
+                    className="mt-1"
+                    isActive={pathName === item.href}
+                  >
+                    <Link href={item.href} className="flex items-center pl-4">
                       <item.icon className="size-5" />
                       <span className="text-sm font-medium">{item.label}</span>
                     </Link>
