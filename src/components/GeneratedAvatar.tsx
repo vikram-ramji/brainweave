@@ -1,5 +1,6 @@
 import { createAvatar } from "@dicebear/core"
-import { botttsNeutral, loreleiNeutral } from "@dicebear/collection";
+import * as botttsNeutral from "@dicebear/bottts-neutral"
+import * as loreleiNeutral from "@dicebear/lorelei-neutral";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { AvatarImage } from "@radix-ui/react-avatar";

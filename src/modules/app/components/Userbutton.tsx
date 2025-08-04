@@ -57,7 +57,7 @@ export default function Userbutton() {
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size={"lg"}
-          className="border flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0"
+          className="border flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent"
         >
           <UserInfo user={data.user} />
           <EllipsisVertical />
