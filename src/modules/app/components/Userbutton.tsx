@@ -14,11 +14,20 @@ import UserInfo from "./UserInfo";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Userbutton() {
   const { data, isPending } = authClient.useSession();
   const { isMobile } = useSidebar();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  // Dispatch lock/unlock events for sidebar hover logic (always mount hooks in same order).
+  useEffect(() => {
+    window.dispatchEvent(
+      new Event(open ? "sidebar-hover-lock" : "sidebar-hover-unlock")
+    );
+  }, [open]);
 
   const userMenuItems = [
     {
@@ -53,11 +62,11 @@ export default function Userbutton() {
     return null;
   }
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size={"lg"}
-          className="border flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent"
+          className="border shadow-sm flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent cursor-pointer"
         >
           <UserInfo user={data.user} />
           <EllipsisVertical />

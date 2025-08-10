@@ -1,6 +1,5 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +16,8 @@ import Logo from "@/../public/logo.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Userbutton from "./Userbutton";
+import React from "react";
+import { useSidebarHover } from "../hooks/useSidebarHover";
 
 const items = [
   {
@@ -33,15 +34,33 @@ const items = [
 
 export default function AppSidebar() {
   const pathName = usePathname();
+  const isActive = (href: string) =>
+    pathName === href || pathName.startsWith(href + "/");
+
+  const { handleMouseEnter, handleMouseLeave } = useSidebarHover();
+
   return (
-    <Sidebar>
+    <Sidebar
+      collapsible="icon"
+      variant="floating"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <SidebarHeader>
-        <Link href="/dashboard" className="flex items-center gap-2 px-2">
-          <Logo className="w-6 h-6 mt-1 fill-foreground" />
-          <p className="text-2xl font-semibold">Brainweave</p>
-        </Link>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!pl-1.5 hover:bg-transparent"
+            >
+              <Link href={"/dashboard"}>
+                <Logo className="mt-1 fill-foreground !size-5.5" />
+                <span className="text-xl font-semibold">Brainweave</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      <Separator className="my-1" />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -49,14 +68,16 @@ export default function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+                  className="relative bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
                 >
                   <Link
                     href={"/create-note"}
-                    className="flex items-center pl-4 "
+                    className="flex items-center group/item"
                   >
                     <PlusCircle className="size-5" />
-                    <span className="text-sm font-medium">New Note</span>
+                    <span className="text-sm transition-transform duration-200 ease-out group-hover/item:translate-x-1 will-change-transform">
+                      Create Note
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -65,11 +86,16 @@ export default function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     className="mt-1"
-                    isActive={pathName === item.href}
+                    isActive={isActive(item.href)}
                   >
-                    <Link href={item.href} className="flex items-center pl-4">
+                    <Link
+                      href={item.href}
+                      className="flex items-center group/item hover:bg-sidebar-accent/40"
+                    >
                       <item.icon className="size-5" />
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <span className="text-sm transition-transform duration-200 ease-out group-hover/item:translate-x-1 will-change-transform">
+                        {item.label}
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
