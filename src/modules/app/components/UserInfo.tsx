@@ -2,7 +2,12 @@ import GeneratedAvatar from "@/components/GeneratedAvatar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "better-auth";
 
-export default function UserInfo({ user }: { user: User }) {
+interface UserInfoProps {
+  user: User;
+  collapsed?: boolean;
+}
+
+export default function UserInfo({ user, collapsed }: UserInfoProps) {
   return (
     <div className="flex items-center gap-3">
       {user.image ? (
@@ -16,7 +21,7 @@ export default function UserInfo({ user }: { user: User }) {
         <GeneratedAvatar
           seed={user.name || "anonymous"}
           variant="loreleiNeutral"
-          className="size-9"
+          className="size-8"
         />
       )}
       <div className="flex flex-col gap-0.5 text-left overflow-hidden flex-1 min-w-0">

@@ -15,10 +15,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ThemeToggleButton from "@/components/ui/theme-toggle-button";
 
 export default function Userbutton() {
   const { data, isPending } = authClient.useSession();
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -78,8 +79,9 @@ export default function Userbutton() {
         className="rounded-lg"
         sideOffset={4}
       >
-        <DropdownMenuLabel className="p-0 font-normal">
+        <DropdownMenuLabel className="flex items-center justify-between gap-2 p-0 font-normal">
           <UserInfo user={data.user} />
+          <ThemeToggleButton />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
