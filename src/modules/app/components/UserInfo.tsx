@@ -4,10 +4,9 @@ import { User } from "better-auth";
 
 interface UserInfoProps {
   user: User;
-  collapsed?: boolean;
 }
 
-export default function UserInfo({ user, collapsed }: UserInfoProps) {
+export default function UserInfo({ user }: UserInfoProps) {
   return (
     <div className="flex items-center gap-3">
       {user.image ? (
