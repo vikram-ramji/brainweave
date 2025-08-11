@@ -29,13 +29,12 @@ export default function ThemeToggleButton({
 
   const styleId = "theme-transition-styles"
 
-  const updateStyles = React.useCallback((css: string, name: string) => {
+  const updateStyles = React.useCallback((css: string) => {
     if (typeof window === "undefined") return
 
     let styleElement = document.getElementById(styleId) as HTMLStyleElement
 
-    console.log("style ELement", styleElement)
-    console.log("name", name)
+  // Apply (or create) a <style> tag for the generated animation CSS
 
     if (!styleElement) {
       styleElement = document.createElement("style")
@@ -44,14 +43,12 @@ export default function ThemeToggleButton({
     }
 
     styleElement.textContent = css
-
-    console.log("content updated")
   }, [])
 
   const toggleTheme = React.useCallback(() => {
     const animation = createAnimation(variant, start, url)
 
-    updateStyles(animation.css, animation.name)
+    updateStyles(animation.css)
 
     if (typeof window === "undefined") return
 
@@ -65,7 +62,7 @@ export default function ThemeToggleButton({
     }
 
     document.startViewTransition(switchTheme)
-  }, [theme, setTheme])
+  }, [theme, setTheme, variant, start, url, updateStyles])
 
   return (
     <Button
