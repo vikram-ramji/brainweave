@@ -26,17 +26,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <TRPCReactProvider>
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <main>{children}</main>
-            <Toaster />
-          </ThemeProvider>
+          <TRPCReactProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <main>{children}</main>
+              <Toaster />
+            </ThemeProvider>
+          </TRPCReactProvider>
         </body>
       </html>
-    </TRPCReactProvider>
   );
 }
