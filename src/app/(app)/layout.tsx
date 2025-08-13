@@ -11,9 +11,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider>
       <div className="flex h-screen w-screen">
         <AppSidebar />
-        <main className="flex flex-col flex-1 overflow-hidden">
-          {children}
-        </main>
+        <main className="flex flex-col flex-1 overflow-hidden">{children}</main>
       </div>
     </SidebarProvider>
   );

@@ -1,11 +1,29 @@
 import type { NextConfig } from "next";
 
+type RuleSetRuleLike = {
+  test?: RegExp;
+  issuer?: unknown;
+  resourceQuery?: unknown;
+  exclude?: unknown;
+  [key: string]: unknown;
+};
+
 const nextConfig: NextConfig = {
   webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule: any) =>
-      rule.test?.test?.(".svg")
+    const fileLoaderRule = config.module.rules.find(
+      (rule: unknown): rule is RuleSetRuleLike =>
+        typeof rule === "object" &&
+        rule !== null &&
+        "test" in (rule as Record<string, unknown>) &&
+        (rule as RuleSetRuleLike).test instanceof RegExp &&
+        (rule as RuleSetRuleLike).test!.test(".svg"),
     );
+
+    if (!fileLoaderRule) {
+      // If we can't find the rule, return the config unchanged.
+      return config;
+    }
 
     config.module.rules.push(
       // Reapply the existing rule, but only for svg imports ending in ?url
@@ -18,9 +36,19 @@ const nextConfig: NextConfig = {
       {
         test: /\.svg$/i,
         issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        // exclude if *.svg?url
+        resourceQuery: {
+          not: [
+            ...((
+              fileLoaderRule.resourceQuery as unknown as {
+                not?: (string | RegExp)[];
+              }
+            )?.not ?? []),
+            /url/,
+          ],
+        },
         use: ["@svgr/webpack"],
-      }
+      },
     );
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.

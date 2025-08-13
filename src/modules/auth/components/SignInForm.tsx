@@ -58,7 +58,7 @@ export default function SignInForm() {
           setPending(false);
           setError(error.message || "An unexpected error occurred");
         },
-      }
+      },
     );
   };
 

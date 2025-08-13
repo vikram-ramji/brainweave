@@ -19,14 +19,14 @@ import ThemeToggleButton from "@/components/ui/theme-toggle-button";
 
 export default function Userbutton() {
   const { data, isPending } = authClient.useSession();
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   // Dispatch lock/unlock events for sidebar hover logic (always mount hooks in same order).
   useEffect(() => {
     window.dispatchEvent(
-      new Event(open ? "sidebar-hover-lock" : "sidebar-hover-unlock")
+      new Event(open ? "sidebar-hover-lock" : "sidebar-hover-unlock"),
     );
   }, [open]);
 
@@ -67,7 +67,7 @@ export default function Userbutton() {
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size={"lg"}
-          className="border shadow-sm flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent cursor-pointer"
+          className="shadow-sm flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent cursor-pointer"
         >
           <UserInfo user={data.user} />
           <EllipsisVertical />

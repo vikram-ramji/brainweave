@@ -37,7 +37,7 @@ const SignUpSchema = z
       .regex(/[0-9]/, "Password must contain at least one number")
       .regex(
         /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character"
+        "Password must contain at least one special character",
       ),
     confirmPassword: z.string().min(1, "Confirm Password is required"),
   })
@@ -76,7 +76,7 @@ export default function SignUpForm() {
         onSuccess: () => {
           setPending(false);
           toast.success(
-            `Email verification sent to ${data.email}! Please check your inbox.`
+            `Email verification sent to ${data.email}! Please check your inbox.`,
           );
           router.push("/verify-email");
         },
@@ -84,7 +84,7 @@ export default function SignUpForm() {
           setPending(false);
           setError(error.message || "An unexpected error occurred");
         },
-      }
+      },
     );
   };
 

@@ -1,5 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
+import { nanoid } from "nanoid";
+import { CreateNoteSchema } from "@/modules/notes/schema";
 
 export const user = t.pgTable(
   "user",
@@ -12,9 +14,9 @@ export const user = t.pgTable(
       .$defaultFn(() => false)
       .notNull(),
     image: t.text("image"),
-    ...timestamps
+    ...timestamps,
   },
-  (table) => [t.index("user_email_idx").on(table.email)]
+  (table) => [t.index("user_email_idx").on(table.email)],
 );
 
 export const session = t.pgTable(
@@ -34,7 +36,7 @@ export const session = t.pgTable(
   (table) => [
     t.index("session_user_id_idx").on(table.userId),
     t.index("session_token_idx").on(table.token),
-  ]
+  ],
 );
 
 export const account = t.pgTable(
@@ -54,9 +56,9 @@ export const account = t.pgTable(
     refreshTokenExpiresAt: t.timestamp("refresh_token_expires_at"),
     scope: t.text("scope"),
     password: t.text("password"),
-    ...timestamps
+    ...timestamps,
   },
-  (table) => [t.index("account_user_id_idx").on(table.userId)]
+  (table) => [t.index("account_user_id_idx").on(table.userId)],
 );
 
 export const verification = t.pgTable(
@@ -66,7 +68,25 @@ export const verification = t.pgTable(
     identifier: t.text("identifier").notNull(),
     value: t.text("value").notNull(),
     expiresAt: t.timestamp("expires_at").notNull(),
-    ...timestamps
+    ...timestamps,
   },
-  (table) => [t.index("verification_identifier_idx").on(table.identifier)]
+  (table) => [t.index("verification_identifier_idx").on(table.identifier)],
+);
+
+export const notes = t.pgTable(
+  "notes",
+  {
+    id: t
+      .text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
+    title: t.varchar("title", { length: 100 }).notNull(),
+    content: t.text("content").notNull(),
+    userId: t
+      .text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    ...timestamps,
+  },
+  (table) => [t.index("notes_user_id_idx").on(table.userId)],
 );
