@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Brainweave
+
+Brainweave is a modern web application built with Next.js, TypeScript, and pnpm. It features modular architecture, authentication, and a clean UI.
+
+## Features
+
+- Next.js 14 app directory structure
+- TypeScript for type safety
+- Modular components and hooks
+- Authentication (sign-in, sign-up, email verification)
+- Dashboard and notes modules
+- UI components (cards, buttons, forms, etc.)
+- Linting and build workflows via GitHub Actions
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20+
+- pnpm
+
+### Installation
+
+```fish
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```fish
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Lint
 
-## Learn More
+```fish
+pnpm lint
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```fish
+pnpm build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+- `src/app` - Application pages and layouts
+- `src/components` - Shared UI components
+- `src/db` - Database helpers and schema
+- `src/hooks` - Custom React hooks
+- `src/lib` - Utility libraries
+- `src/modules` - Feature modules (app, auth, notes)
+- `src/trpc` - tRPC client/server setup
+- `public` - Static assets
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pull requests are welcome! Please lint and build before submitting.
+
+## License
+
+MIT
