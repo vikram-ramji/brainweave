@@ -1,7 +1,6 @@
 import * as t from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
 import { nanoid } from "nanoid";
-import { CreateNoteSchema } from "@/modules/notes/schema";
 
 export const user = t.pgTable(
   "user",

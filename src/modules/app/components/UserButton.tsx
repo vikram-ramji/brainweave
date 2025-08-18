@@ -17,9 +17,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ThemeToggleButton from "@/components/ui/theme-toggle-button";
 
-export default function Userbutton() {
+export default function UserButton() {
   const { data, isPending } = authClient.useSession();
-  const { isMobile, state } = useSidebar();
+  const { isMobile } = useSidebar();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
