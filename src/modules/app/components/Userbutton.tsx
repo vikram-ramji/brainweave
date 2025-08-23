@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +21,7 @@ import ThemeToggleButton from "@/components/ui/theme-toggle-button";
 
 export default function Userbutton() {
   const { data, isPending } = authClient.useSession();
-  const { isMobile, state } = useSidebar();
+  const { isMobile } = useSidebar();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 

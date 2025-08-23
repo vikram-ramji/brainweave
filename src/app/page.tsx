@@ -1,32 +1,19 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/modules/auth/lib/authClient";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { auth } from "@/modules/auth/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  const { data: session } = authClient.useSession();
-  const router = useRouter();
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  useEffect(() => {
-    if (session) {
-      router.push("/dashboard");
-    }
-  }, [session, router]);
+  if (session) {
+    redirect("/dashboard");
+  }
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Welcome to Brainweave</h1>
-      <p>Signed in as {session?.user?.email ?? "Guest"}</p>
-      {session && (
-        <Button
-          onClick={() => {
-            authClient.signOut();
-          }}
-        >
-          Sign Out
-        </Button>
-      )}
     </div>
   );
 }
