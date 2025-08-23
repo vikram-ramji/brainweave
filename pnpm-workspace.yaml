@@ -1,3 +1,6 @@
+ignoredBuiltDependencies:
+  - "@biomejs/biome"
+
 onlyBuiltDependencies:
   - "@tailwindcss/oxide"
   - esbuild

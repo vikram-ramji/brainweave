@@ -12,7 +12,7 @@ export default async function VerifyEmailPage() {
   });
 
   if (session) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (

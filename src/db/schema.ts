@@ -1,6 +1,7 @@
 import * as t from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.helpers";
 import { nanoid } from "nanoid";
+import { Value } from "platejs";
 
 export const user = t.pgTable(
   "user",
@@ -79,13 +80,14 @@ export const notes = t.pgTable(
       .text("id")
       .primaryKey()
       .$defaultFn(() => nanoid()),
-    title: t.varchar("title", { length: 100 }).notNull(),
-    content: t.text("content").notNull(),
+    title: t.varchar("title", { length: 100 }).notNull().default("Untitled"),
+    content: t.jsonb("content").$type<Value>(),
+    textContent: t.text("text_content").notNull().default(""),
     userId: t
       .text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     ...timestamps,
   },
-  (table) => [t.index("notes_user_id_idx").on(table.userId)],
+  (table) => [t.index("notes_user_id_id_idx").on(table.userId, table.id)],
 );
