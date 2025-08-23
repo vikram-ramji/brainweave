@@ -15,7 +15,7 @@ import { Files, Home, PlusCircle } from "lucide-react";
 import Logo from "@/../public/logo.svg";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Userbutton from "./Userbutton";
+import UserButton from "./UserButton";
 import React from "react";
 import { useSidebarHover } from "../hooks/useSidebarHover";
 import { useTRPC } from "@/trpc/client";
@@ -126,7 +126,7 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <Userbutton />
+        <UserButton />
       </SidebarFooter>
     </Sidebar>
   );
