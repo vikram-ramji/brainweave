@@ -19,6 +19,7 @@ import { authClient } from "@/modules/auth/lib/authClient";
 import { toast } from "sonner";
 import FormDivider from "./FormDivider";
 import SocialAuthButtons from "./SocialAuthButtons";
+import { useRouter } from "@bprogress/next/app";
 
 const SignInSchema = z.object({
   email: z
@@ -30,6 +31,8 @@ const SignInSchema = z.object({
 export default function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),
@@ -47,12 +50,12 @@ export default function SignInForm() {
       {
         email: data.email,
         password: data.password,
-        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false);
           toast.success("Signed in successfully!");
+          router.push("/dashboard");
         },
         onError: ({ error }) => {
           setPending(false);

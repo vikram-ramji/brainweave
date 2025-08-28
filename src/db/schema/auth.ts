@@ -1,26 +1,9 @@
 import * as t from "drizzle-orm/pg-core";
-import { timestamps } from "./columns.helpers";
-import { nanoid } from "nanoid";
-import { Value } from "platejs";
+import { timestamps } from "../columns.helpers";
+import { users } from "./users";
 
-export const user = t.pgTable(
-  "user",
-  {
-    id: t.text("id").primaryKey(),
-    name: t.text("name").notNull(),
-    email: t.text("email").notNull().unique(),
-    emailVerified: t
-      .boolean("email_verified")
-      .$defaultFn(() => false)
-      .notNull(),
-    image: t.text("image"),
-    ...timestamps,
-  },
-  (table) => [t.index("user_email_idx").on(table.email)],
-);
-
-export const session = t.pgTable(
-  "session",
+export const sessions = t.pgTable(
+  "sessions",
   {
     id: t.text("id").primaryKey(),
     expiresAt: t.timestamp("expires_at").notNull(),
@@ -31,7 +14,7 @@ export const session = t.pgTable(
     userId: t
       .text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (table) => [
     t.index("session_user_id_idx").on(table.userId),
@@ -39,8 +22,8 @@ export const session = t.pgTable(
   ],
 );
 
-export const account = t.pgTable(
-  "account",
+export const accounts = t.pgTable(
+  "accounts",
   {
     id: t.text("id").primaryKey(),
     accountId: t.text("account_id").notNull(),
@@ -48,7 +31,7 @@ export const account = t.pgTable(
     userId: t
       .text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     accessToken: t.text("access_token"),
     refreshToken: t.text("refresh_token"),
     idToken: t.text("id_token"),
@@ -61,8 +44,8 @@ export const account = t.pgTable(
   (table) => [t.index("account_user_id_idx").on(table.userId)],
 );
 
-export const verification = t.pgTable(
-  "verification",
+export const verifications = t.pgTable(
+  "verifications",
   {
     id: t.text("id").primaryKey(),
     identifier: t.text("identifier").notNull(),
@@ -71,23 +54,4 @@ export const verification = t.pgTable(
     ...timestamps,
   },
   (table) => [t.index("verification_identifier_idx").on(table.identifier)],
-);
-
-export const notes = t.pgTable(
-  "notes",
-  {
-    id: t
-      .text("id")
-      .primaryKey()
-      .$defaultFn(() => nanoid()),
-    title: t.varchar("title", { length: 100 }).notNull().default("Untitled"),
-    content: t.jsonb("content").$type<Value>(),
-    textContent: t.text("text_content").notNull().default(""),
-    userId: t
-      .text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    ...timestamps,
-  },
-  (table) => [t.index("notes_user_id_id_idx").on(table.userId, table.id)],
 );

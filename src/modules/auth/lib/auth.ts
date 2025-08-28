@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
-import * as schema from "@/db/schema";
+import { schema } from "@/db/schema";
 import { sendVerificationEmail } from "./email";
 
 export const auth = betterAuth({
@@ -10,6 +10,7 @@ export const auth = betterAuth({
     schema: {
       ...schema,
     },
+    usePlural: true,
   }),
   emailAndPassword: {
     enabled: true,

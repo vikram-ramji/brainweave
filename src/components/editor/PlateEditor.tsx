@@ -1,25 +1,16 @@
 "use client";
 
-import { Plate, usePlateEditor } from "platejs/react";
-import { EditorKit } from "@/components/editor/editor-kit";
+import { Plate, PlatePlugin, TPlateEditor } from "platejs/react";
 import { Editor, EditorContainer } from "@/components/ui/editor";
 import { Value } from "platejs";
 import { getPlainText } from "./utils";
 
 interface PlateEditorProps {
-  initialContent: Value;
+  editor: TPlateEditor<Value, PlatePlugin>;
   onChange: (newContent: Value, textContent: string) => void;
 }
 
-export default function PlateEditor({
-  initialContent,
-  onChange,
-}: PlateEditorProps) {
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value: initialContent,
-  });
-
+export default function PlateEditor({ editor, onChange }: PlateEditorProps) {
   // TODO: Integrate more functionality, for reference use platejs.org
   return (
     <Plate

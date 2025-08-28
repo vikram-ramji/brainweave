@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -40,7 +41,7 @@ export default function NoteCard({ note }: NoteCardProps) {
     trpc.notes.delete.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: trpc.notes.getMany.queryOptions().queryKey,
+          queryKey: trpc.notes.getMany.infiniteQueryOptions({}).queryKey,
         });
         toast.success("Note deleted successfully");
       },
@@ -59,10 +60,14 @@ export default function NoteCard({ note }: NoteCardProps) {
   };
 
   return (
-    <Link href={`/notes/${note.id}`} key={note.id} className="h-full">
-      <Card className="relative z-20 h-full w-full overflow-hidden flex flex-col group">
+    <Link
+      href={`/notes/${encodeURIComponent(note.id)}`}
+      key={note.id}
+      className="h-full"
+    >
+      <Card className="relative z-20 h-50 w-full overflow-hidden flex flex-col group">
         <CardHeader>
-          <CardTitle>{note.title}</CardTitle>
+          <CardTitle className="line-clamp-2">{note.title}</CardTitle>
           <CardDescription>
             {`${isNoteUpdated ? "Last updated" : "Created"}: ${getLastUpdated(note.updatedAt)}`}
           </CardDescription>
@@ -100,7 +105,7 @@ export default function NoteCard({ note }: NoteCardProps) {
             </AlertDialog>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex-grow">
+        <CardContent className="flex-1">
           <p className="whitespace-pre-line line-clamp-4">
             {note.textContent.substring(0, 100)}...
           </p>

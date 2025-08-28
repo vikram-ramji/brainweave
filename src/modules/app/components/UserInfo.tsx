@@ -1,3 +1,4 @@
+"use client";
 import GeneratedAvatar from "@/components/GeneratedAvatar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "better-auth";

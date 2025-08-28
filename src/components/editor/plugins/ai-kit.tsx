@@ -1,7 +1,7 @@
 "use client";
 
 import type { AIChatPluginConfig } from "@platejs/ai/react";
-import type { UseChatOptions } from "ai/react";
+// import type { UseChatOptions } from "ai/react";
 
 import { streamInsertChunk, withAIBatch } from "@platejs/ai";
 import { AIChatPlugin, AIPlugin, useChatChunk } from "@platejs/ai/react";
@@ -16,10 +16,10 @@ import { MarkdownKit } from "./markdown-kit";
 
 export const aiChatPlugin = AIChatPlugin.extend({
   options: {
-    chatOptions: {
-      api: "/api/ai/command",
-      body: {},
-    } as UseChatOptions,
+    // chatOptions: {
+    //   api: "/api/ai/command",
+    //   body: {},
+    // } as UseChatOptions,
     promptTemplate: ({ isBlockSelecting, isSelecting }) => {
       return isBlockSelecting
         ? PROMPT_TEMPLATES.userBlockSelecting
