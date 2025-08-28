@@ -19,7 +19,7 @@ import { authClient } from "@/modules/auth/lib/authClient";
 import { toast } from "sonner";
 import SocialAuthButtons from "./SocialAuthButtons";
 import FormDivider from "./FormDivider";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@bprogress/next/app";
 
 const SignUpSchema = z
   .object({

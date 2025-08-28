@@ -1,5 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/modules/app/components/AppSidebar";
+import AppLayoutContent from "@/modules/app/components/AppLayoutContent";
+import { TRPCReactProvider } from "@/trpc/client";
 import React from "react";
 
 interface AppLayoutProps {
@@ -9,10 +10,9 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-screen">
-        <AppSidebar />
-        <main className="flex flex-col flex-1 overflow-hidden">{children}</main>
-      </div>
+      <TRPCReactProvider>
+        <AppLayoutContent>{children}</AppLayoutContent>
+      </TRPCReactProvider>
     </SidebarProvider>
   );
 }

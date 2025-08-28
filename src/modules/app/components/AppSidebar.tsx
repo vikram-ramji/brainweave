@@ -11,16 +11,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Files, Home, PlusCircle } from "lucide-react";
+import {
+  Files,
+  Home,
+  PlusCircle,
+  SearchIcon,
+  SidebarClose,
+  SidebarOpen,
+} from "lucide-react";
 import Logo from "@/../public/logo.svg";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import UserButton from "./UserButton";
-import React from "react";
-import { useSidebarHover } from "../hooks/useSidebarHover";
+import React, { useState } from "react";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "@bprogress/next/app";
+import { Button } from "@/components/ui/button";
 
 const items = [
   {
@@ -35,7 +43,25 @@ const items = [
   },
 ];
 
-export default function AppSidebar() {
+interface AppSidebarProps {
+  setIsHoverLocked: (value: boolean) => void;
+  setIsSearchDialogOpen: (value: boolean) => void;
+  setIsSidebarOpen: (value: boolean) => void;
+  isFloating: boolean;
+  setIsFloating: (value: boolean) => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}
+
+export default function AppSidebar({
+  setIsHoverLocked,
+  setIsSearchDialogOpen,
+  setIsSidebarOpen,
+  isFloating,
+  setIsFloating,
+  onMouseEnter,
+  onMouseLeave,
+}: AppSidebarProps) {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -44,7 +70,7 @@ export default function AppSidebar() {
     trpc.notes.create.mutationOptions({
       onSuccess: (data) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.notes.getMany.queryOptions().queryKey,
+          queryKey: trpc.notes.getMany.infiniteQueryOptions({}).queryKey,
         });
         queryClient.setQueryData(
           trpc.notes.getOne.queryOptions({ id: data.id }).queryKey,
@@ -62,18 +88,27 @@ export default function AppSidebar() {
   const isActive = (href: string) =>
     pathName === href || pathName.startsWith(href + "/");
 
-  const { handleMouseEnter, handleMouseLeave } = useSidebarHover();
+  const [isPinned, setIsPinned] = useState(true);
+  const handlePinning = () => {
+    if (isPinned) {
+      setIsPinned(false);
+      setIsFloating(true);
+      setIsSidebarOpen(false);
+    } else {
+      setIsFloating(false);
+      setIsPinned(true);
+    }
+  };
 
   return (
     <Sidebar
-      collapsible="icon"
-      variant="floating"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      variant={isFloating ? "floating" : "sidebar"}
+      onMouseEnter={isPinned ? undefined : onMouseEnter}
+      onMouseLeave={isPinned ? undefined : onMouseLeave}
     >
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="flex items-center justify-between">
             <SidebarMenuButton
               asChild
               className="data-[slot=sidebar-menu-button]:!pl-1.5 hover:bg-transparent"
@@ -83,6 +118,28 @@ export default function AppSidebar() {
                 <span className="text-xl font-semibold">Brainweave</span>
               </Link>
             </SidebarMenuButton>
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSearchDialogOpen(true)}
+                className="h-7 w-7"
+              >
+                <SearchIcon className="h-4 w-4 text-foreground" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePinning}
+                className="h-7 w-7"
+              >
+                {isPinned ? (
+                  <SidebarClose className="h-4 w-4 text-foreground" />
+                ) : (
+                  <SidebarOpen className="h-4 w-4 text-foreground" />
+                )}
+              </Button>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -126,7 +183,7 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <UserButton />
+        <UserButton setIsHoverLocked={setIsHoverLocked} />
       </SidebarFooter>
     </Sidebar>
   );

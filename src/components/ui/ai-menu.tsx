@@ -69,7 +69,8 @@ export function AIMenu() {
     null,
   );
 
-  const content = useLastAssistantMessage()?.content;
+  const content =
+    (useLastAssistantMessage()?.parts[0] as unknown as string) || "";
 
   React.useEffect(() => {
     if (streaming) {

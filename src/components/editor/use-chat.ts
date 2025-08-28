@@ -9,7 +9,7 @@ import { usePluginOption } from "platejs/react";
 import { aiChatPlugin } from "@/components/editor/plugins/ai-kit";
 
 export const useChat = () => {
-  const options = usePluginOption(aiChatPlugin, "chatOptions");
+  const options = usePluginOption(aiChatPlugin, "chat");
 
   // remove when you implement the route /api/ai/command
   const abortControllerRef = React.useRef<AbortController | null>(null);

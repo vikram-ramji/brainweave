@@ -13,24 +13,19 @@ import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/modules/auth/lib/authClient";
 import { EllipsisVertical, LogOut, Settings, User } from "lucide-react";
 import UserInfo from "./UserInfo";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import ThemeToggleButton from "@/components/ui/theme-toggle-button";
+import { useRouter } from "@bprogress/next/app";
 
-export default function UserButton() {
+export default function UserButton({
+  setIsHoverLocked,
+}: {
+  setIsHoverLocked: (value: boolean) => void;
+}) {
   const { data, isPending } = authClient.useSession();
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-
-  // Dispatch lock/unlock events for sidebar hover logic (always mount hooks in same order).
-  useEffect(() => {
-    window.dispatchEvent(
-      new Event(open ? "sidebar-hover-lock" : "sidebar-hover-unlock"),
-    );
-  }, [open]);
 
   const userMenuItems = [
     {
@@ -65,7 +60,7 @@ export default function UserButton() {
     return null;
   }
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu onOpenChange={(open) => setIsHoverLocked(open)}>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size={"lg"}
