@@ -140,7 +140,7 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
                       {new Intl.DateTimeFormat("en-US", {
                         month: "short",
                         day: "numeric",
-                      }).format(new Date(note.updatedAt))}
+                      }).format(note.updatedAt)}
                     </span>
                   </div>
                   <p

@@ -3,7 +3,7 @@ import { timestamps } from "../columns.helpers";
 import { nanoid } from "nanoid";
 import { Value } from "platejs";
 import { users } from "./users";
-import { SQL, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export const tsvector = t.customType<{
   data: string;
@@ -23,14 +23,7 @@ export const notes = t.pgTable(
     title: t.varchar("title", { length: 100 }).notNull().default("Untitled"),
     content: t.jsonb("content").$type<Value>(),
     textContent: t.text("text_content").notNull().default(""),
-    search: tsvector("search")
-      .notNull()
-      .generatedAlwaysAs(
-        (): SQL =>
-          sql`setweight(to_tsvector('english', ${notes.title}), 'A')
-        ||
-        setweight(to_tsvector('english', ${notes.textContent}), 'B')`,
-      ),
+    tagsText: t.text("tags_text").notNull().default(""),
     userId: t
       .text("user_id")
       .notNull()
@@ -39,6 +32,11 @@ export const notes = t.pgTable(
   },
   (table) => [
     t.index("notes_user_id_id_idx").on(table.userId, table.id),
-    t.index("idx_search").using("gin", table.search),
+    t
+      .index("search_vector_idx")
+      .using(
+        "gin",
+        sql`(setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', text_content), 'B') || setweight(to_tsvector('english', tags_text), 'C'))`,
+      ),
   ],
 );

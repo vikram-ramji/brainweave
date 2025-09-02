@@ -31,7 +31,7 @@ export default function SearchResultCard({ note }: { note: NoteSearch }) {
             {new Intl.DateTimeFormat("en-US", {
               month: "short",
               day: "numeric",
-            }).format(new Date(note.updatedAt))}
+            }).format(note.updatedAt)}
           </div>
         </CardHeader>
       </Card>
