@@ -1,18 +1,18 @@
+import ErrorState from "@/components/ErrorState";
 import LoadingState from "@/components/LoadingState";
 import { auth } from "@/modules/auth/lib/auth";
+import TagPage from "@/modules/tags/components/TagPage";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { ErrorBoundary } from "react-error-boundary";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import ErrorState from "@/components/ErrorState";
-import NoteEditor from "@/modules/notes/ui/components/NoteEditor";
+import { ErrorBoundary } from "react-error-boundary";
 
-export default async function NotePage({
+export default async function page({
   params,
 }: {
-  params: Promise<{ noteId: string }>;
+  params: Promise<{ tagName: string }>;
 }) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -22,16 +22,16 @@ export default async function NotePage({
     redirect("/sign-in");
   }
 
-  const { noteId } = await params;
+  const { tagName } = await params;
   const queryClient = getQueryClient();
   await Promise.all([
-    queryClient.prefetchQuery({
-      ...trpc.notes.getOne.queryOptions({ id: noteId }),
-      staleTime: 60000,
+    queryClient.prefetchInfiniteQuery({
+      ...trpc.notes.getMany.infiniteQueryOptions({ tagName }),
+      staleTime: 1000 * 60 * 5,
     }),
     queryClient.prefetchQuery({
-      ...trpc.tags.getAll.queryOptions(),
-      staleTime: 60000,
+      ...trpc.tags.getOne.queryOptions({ name: tagName }),
+      staleTime: 1000 * 60 * 5,
     }),
   ]);
 
@@ -39,7 +39,7 @@ export default async function NotePage({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingState />}>
         <ErrorBoundary fallback={<ErrorState />}>
-          <NoteEditor noteId={noteId} />
+          <TagPage tagName={tagName} />
         </ErrorBoundary>
       </Suspense>
     </HydrationBoundary>

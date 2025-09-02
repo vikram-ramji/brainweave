@@ -3,7 +3,13 @@ import type { Value } from "platejs";
 
 export const GetNotesSchema = z.object({
   limit: z.number().min(1).max(50).optional(),
-  cursor: z.string().optional(),
+  cursor: z
+    .object({
+      createdAt: z.date(),
+      id: z.nanoid(),
+    })
+    .optional(),
+  tagName: z.string().optional(),
 });
 
 export const NoteIdSchema = z.object({ id: z.string() });
@@ -29,4 +35,9 @@ export const SearchNotesSchema = z.object({
     }),
   limit: z.number().min(1).max(50).optional(),
   cursor: z.string().optional(),
+});
+
+export const NoteToTagSchema = z.object({
+  noteId: z.nanoid(),
+  tagId: z.nanoid(),
 });

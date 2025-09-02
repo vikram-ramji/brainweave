@@ -13,6 +13,7 @@ import { Value } from "platejs";
 import { Textarea } from "@/components/ui/textarea";
 import { usePlateEditor } from "platejs/react";
 import { EditorKit } from "@/components/editor/editor-kit";
+import TagInput from "@/modules/tags/components/TagInput";
 
 const PlateEditor = dynamic(() => import("@/components/editor/PlateEditor"), {
   ssr: false,
@@ -24,6 +25,7 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
   const { data: note } = useSuspenseQuery(
     trpc.notes.getOne.queryOptions({ id: noteId }),
   );
+  const { data: tags } = useSuspenseQuery(trpc.tags.getAll.queryOptions());
 
   const [title, setTitle] = useState(note.title);
 
@@ -103,20 +105,23 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
   return (
     <div className="flex h-full flex-col">
       <div className="w-full flex flex-col flex-1">
-        <div className=" relative flex flex-col justify-end sm:min-h-30 px-16 sm:px-[max(64px,calc(50%-350px))] mt-10">
+        <div className="relative flex flex-col justify-end sm:min-h-30 px-16 sm:px-[max(64px,calc(50%-350px))] mt-20">
           <div className="flex justify-between max-w-full">
             <Textarea
               value={title === "Untitled" ? "" : title}
               onChange={handleTitleChange}
               onBlur={() => debouncedTitleSave.flush()}
               onKeyDown={handleTitleKeyDown}
-              className=" lg:text-4xl md:text-3xl text-2xl font-bold bg-transparent! w-full border-0 focus-visible:border-0 focus-visible:ring-0 px-0 shadow-none shrink-0 resize-none"
+              className=" lg:text-4xl md:text-3xl text-2xl font-bold !bg-transparent w-full border-0 focus-visible:border-0 focus-visible:ring-0 px-0 shadow-none shrink-0 resize-none"
               placeholder="Add a title"
               maxLength={100}
             />
           </div>
+          <div>
+            <TagInput userTags={tags} noteTags={note.tags} noteId={note.id} />
+          </div>
         </div>
-        <div className="mt-2 flex-1">
+        <div className="flex-1">
           <PlateEditor editor={editor} onChange={debouncedSaveContent} />
         </div>
       </div>
