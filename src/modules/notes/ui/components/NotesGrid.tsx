@@ -45,7 +45,7 @@ export default function NotesGrid() {
         </p>
       )}
 
-      {!hasNextPage && notes.length > 0 && (
+      {!hasNextPage && notes.length > 0 && data.pages.length > 1 && (
         <p className="text-center my-8 text-muted-foreground">
           You&apos;ve reached the end.
         </p>

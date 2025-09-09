@@ -203,9 +203,9 @@ export const notesRouter = createTRPCRouter({
           })
         : undefined;
 
-      const ftsVectorExpression = sql`(setweight(to_tsvector('english', ${notes.title}), 'A') || setweight(to_tsvector('english', ${notes.textContent}), 'B') || setweight(to_tsvector('english', ${notes.tagsText}), 'C'))`;
+      const ftsVectorExpression = sql`(setweight(to_tsvector('english', ${notes.title}), 'A') || setweight(to_tsvector('english', ${notes.textContent}), 'B') || setweight(to_tsvector('simple', ${notes.tagsText}), 'C'))`;
 
-      const tsQuery = sql`websearch_to_tsquery('english', ${query})`;
+      const tsQuery = sql`(websearch_to_tsquery('english', ${query}) || websearch_to_tsquery('simple', ${query}))`;
       const rank = sql<number>`ts_rank(${ftsVectorExpression}, ${tsQuery})`.as(
         "rank",
       );

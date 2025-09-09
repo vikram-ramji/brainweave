@@ -12,7 +12,12 @@ export default function UserInfo({ user }: UserInfoProps) {
     <div className="flex items-center gap-3">
       {user.image ? (
         <Avatar>
-          <AvatarImage src={user.image} alt={user.name || "User Avatar"} />
+          <AvatarImage
+            src={user.image}
+            alt={user.name || "User Avatar"}
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
+          />
           <AvatarFallback>
             {(user.name || "U").charAt(0).toUpperCase()}
           </AvatarFallback>

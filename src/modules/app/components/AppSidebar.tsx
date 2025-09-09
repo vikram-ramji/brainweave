@@ -15,7 +15,7 @@ import {
 import {
   ChevronRight,
   Files,
-  Home,
+  // Home,
   PlusCircle,
   SearchIcon,
   SidebarClose,
@@ -39,11 +39,11 @@ import {
 } from "@/components/ui/collapsible";
 
 const items = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: Home,
-  },
+  // {
+  //   label: "Dashboard",
+  //   href: "/dashboard",
+  //   icon: Home,
+  // },
   {
     label: "All Notes",
     href: "/notes",
@@ -124,7 +124,7 @@ export default function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!pl-1.5 hover:bg-transparent"
             >
               <Link href={"/dashboard"}>
-                <Logo className="fill-foreground !size-5.5" />
+                <Logo className="fill-foreground !size-5" />
                 <span className="text-xl font-semibold">Brainweave</span>
               </Link>
             </SidebarMenuButton>
@@ -194,7 +194,7 @@ export default function AppSidebar({
             <SidebarMenu>
               <Collapsible className="group/collapsible">
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton className="flex items-center w-full mt-1 rounded-none group/item hover:bg-sidebar hover:border-l-5 data-[active=true]:bg-sidebar data-[active=true]:border-l-5 data-[state=open]:hover:bg-sidebar border-primary">
+                  <SidebarMenuButton className="flex items-center w-full rounded-none group/item hover:bg-sidebar hover:border-l-5 data-[active=true]:bg-sidebar data-[active=true]:border-l-5 data-[state=open]:hover:bg-sidebar border-primary">
                     <TagsIcon className="size-5 mb-0.5" />
                     <span className="text-base transition-transform duration-200 ease-out group-hover/item:translate-x-1 will-change-transform">
                       Tags

@@ -41,6 +41,11 @@ CREATE TABLE "notes" (
 	"content" jsonb,
 	"text_content" text DEFAULT '' NOT NULL,
 	"tags_text" text DEFAULT '' NOT NULL,
+	"search_vector" "tsvector" GENERATED ALWAYS AS (
+          setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+          setweight(to_tsvector('english', coalesce(text_content, '')), 'B') ||
+          setweight(to_tsvector('simple', coalesce(tags_text, '')), 'C')
+        ) STORED NOT NULL,
 	"user_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -82,7 +87,7 @@ CREATE INDEX "session_user_id_idx" ON "sessions" USING btree ("user_id");--> sta
 CREATE INDEX "session_token_idx" ON "sessions" USING btree ("token");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verifications" USING btree ("identifier");--> statement-breakpoint
 CREATE INDEX "notes_user_id_id_idx" ON "notes" USING btree ("user_id","id");--> statement-breakpoint
-CREATE INDEX "search_vector_idx" ON "notes" USING gin ((setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', text_content), 'B') || setweight(to_tsvector('english', tags_text), 'C')));--> statement-breakpoint
+CREATE INDEX "search_vector_idx" ON "notes" USING gin ("search_vector");--> statement-breakpoint
 CREATE INDEX "tag_user_idx" ON "tags" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "tag_user_unique_idx" ON "tags" USING btree ("user_id","name");--> statement-breakpoint
 CREATE INDEX "user_email_idx" ON "users" USING btree ("email");

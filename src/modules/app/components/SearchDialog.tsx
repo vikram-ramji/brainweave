@@ -15,6 +15,7 @@ import { ArrowRight, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import DOMPurify from "isomorphic-dompurify";
+import { Badge } from "@/components/ui/badge";
 
 interface SearchDialogProps {
   open: boolean;
@@ -49,7 +50,7 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
     }
   }, [open]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     ...trpc.notes.search.queryOptions({ query: debouncedQuery, limit: 7 }),
     enabled: debouncedQuery.length > 1,
   });
@@ -113,6 +114,11 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
           />
         </div>
         <div className="max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto">
+          {error && (
+            <div className="py-6 text-center text-sm text-red-500">
+              {error.message}
+            </div>
+          )}
           {isLoading && (
             <div className="py-6 text-center text-sm">Searching...</div>
           )}
@@ -125,7 +131,7 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
                 <li
                   key={note.id}
                   className={cn(
-                    "relative flex flex-col items-start cursor-pointer gap-2 rounded-sm px-2 py-1.5 mx-1.5 my-1 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground",
+                    "relative flex flex-col items-start cursor-pointer rounded-sm px-2 py-1.5 mx-1.5 my-1 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground",
                     index === activeIndex && "bg-accent text-accent-foreground",
                   )}
                   onClick={() =>
@@ -135,8 +141,19 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
                   }
                 >
                   <div className="flex w-full items-center justify-between">
-                    <span className="font-medium truncate">{note.title}</span>
-                    <span className="ml-4 text-xs text-muted-foreground flex-shrink-0">
+                    <div className="flex flex-row items-center gap-2 w-0 flex-1">
+                      <span className="font-semibold text-base truncate">
+                        {note.title}
+                      </span>
+                      <div className="truncate">
+                        {note.tags.map((tag) => (
+                          <Badge key={tag.id} className="mr-1">
+                            {tag.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <span className="ml-4 text-muted-foreground flex-shrink-0">
                       {new Intl.DateTimeFormat("en-US", {
                         month: "short",
                         day: "numeric",
@@ -144,7 +161,7 @@ export default function SearchDialog({ open, setOpen }: SearchDialogProps) {
                     </span>
                   </div>
                   <p
-                    className="text-xs text-muted-foreground w-full truncate"
+                    className="text-sm py-2 border-l-4 pl-2 w-full truncate"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(note.snippet, {
                         ALLOWED_TAGS: ["mark", "em", "strong"],

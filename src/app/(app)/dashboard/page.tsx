@@ -11,6 +11,8 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
+  redirect("/notes");
+
   return <div>dashboard</div>;
 }
 // TODO: Implement the dashboard page functionality
