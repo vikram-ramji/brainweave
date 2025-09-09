@@ -1,5 +1,5 @@
 {
-  "id": "4ab55954-1e61-4115-94c9-8152c59629ba",
+  "id": "89d7bbb9-75b8-4528-87de-a80cd83e072d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -337,6 +337,16 @@
           "notNull": true,
           "default": "''"
         },
+        "search_vector": {
+          "name": "search_vector",
+          "type": "tsvector",
+          "primaryKey": false,
+          "notNull": true,
+          "generated": {
+            "as": "\n          setweight(to_tsvector('english', coalesce(title, '')), 'A') ||\n          setweight(to_tsvector('english', coalesce(text_content, '')), 'B') ||\n          setweight(to_tsvector('simple', coalesce(tags_text, '')), 'C')\n        ",
+            "type": "stored"
+          }
+        },
         "user_id": {
           "name": "user_id",
           "type": "text",
@@ -384,9 +394,9 @@
           "name": "search_vector_idx",
           "columns": [
             {
-              "expression": "(setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', text_content), 'B') || setweight(to_tsvector('english', tags_text), 'C'))",
+              "expression": "search_vector",
+              "isExpression": false,
               "asc": true,
-              "isExpression": true,
               "nulls": "last"
             }
           ],

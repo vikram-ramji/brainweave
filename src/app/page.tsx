@@ -1,4 +1,6 @@
 import { auth } from "@/modules/auth/lib/auth";
+import HomeHero from "@/modules/home/components/HomeHero";
+import HomeNavbar from "@/modules/home/components/HomeNavbar";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -12,8 +14,9 @@ export default async function Home() {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Welcome to Brainweave</h1>
+    <div className="flex flex-col">
+      <HomeNavbar />
+      <HomeHero />
     </div>
   );
 }

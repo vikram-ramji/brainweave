@@ -62,7 +62,7 @@ export default function NoteCard({ note }: NoteCardProps) {
   return (
     <Card
       key={note.id}
-      className="relative z-20 h-55 w-full overflow-hidden flex flex-col group border-primary/40"
+      className="relative z-20 h-55 w-full overflow-hidden flex flex-col group border-border/50 shadow-md"
     >
       <Link
         href={`/notes/${encodeURIComponent(note.id)}`}
@@ -107,7 +107,7 @@ export default function NoteCard({ note }: NoteCardProps) {
       </CardHeader>
       <CardContent className="flex-1">
         <p className="whitespace-pre-line line-clamp-2">
-          {note.textContent.substring(0, 100)}...
+          {note.textContent.substring(0, 100)}
         </p>
       </CardContent>
       <CardFooter>
