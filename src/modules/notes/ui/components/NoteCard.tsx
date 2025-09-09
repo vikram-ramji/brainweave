@@ -107,7 +107,9 @@ export default function NoteCard({ note }: NoteCardProps) {
       </CardHeader>
       <CardContent className="flex-1">
         <p className="whitespace-pre-line line-clamp-2">
-          {note.textContent.substring(0, 100)}
+          {note.textContent.length > 100
+            ? `${note.textContent.slice(0, 100)}...`
+            : note.textContent}
         </p>
       </CardContent>
       <CardFooter>

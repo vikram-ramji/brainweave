@@ -203,10 +203,8 @@ export const notesRouter = createTRPCRouter({
           })
         : undefined;
 
-      const ftsVectorExpression = sql`(setweight(to_tsvector('english', ${notes.title}), 'A') || setweight(to_tsvector('english', ${notes.textContent}), 'B') || setweight(to_tsvector('simple', ${notes.tagsText}), 'C'))`;
-
       const tsQuery = sql`(websearch_to_tsquery('english', ${query}) || websearch_to_tsquery('simple', ${query}))`;
-      const rank = sql<number>`ts_rank(${ftsVectorExpression}, ${tsQuery})`.as(
+      const rank = sql<number>`ts_rank(${notes.searchVector}, ${tsQuery})`.as(
         "rank",
       );
       const snippet =
@@ -224,7 +222,7 @@ export const notesRouter = createTRPCRouter({
         .where(
           and(
             eq(notes.userId, userId),
-            sql`${ftsVectorExpression} @@ ${tsQuery}`,
+            sql`${notes.searchVector} @@ ${tsQuery}`,
             parsedCursor
               ? sql`(${rank}, ${notes.id}) < (${parsedCursor.rank}, ${parsedCursor.id})`
               : undefined,
