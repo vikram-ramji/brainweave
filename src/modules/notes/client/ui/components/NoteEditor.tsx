@@ -1,11 +1,7 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import dynamic from "next/dynamic";
@@ -14,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePlateEditor } from "platejs/react";
 import { EditorKit } from "@/components/editor/editor-kit";
 import TagInput from "@/modules/tags/components/TagInput";
+import { useUpdateNote } from "../../hooks";
+import { Separator } from "@/components/ui/separator";
 
 const PlateEditor = dynamic(() => import("@/components/editor/PlateEditor"), {
   ssr: false,
@@ -21,7 +19,6 @@ const PlateEditor = dynamic(() => import("@/components/editor/PlateEditor"), {
 
 export default function NoteEditor({ noteId }: { noteId: string }) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const { data: note } = useSuspenseQuery(
     trpc.notes.getOne.queryOptions({ id: noteId }),
   );
@@ -29,47 +26,7 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
 
   const [title, setTitle] = useState(note.title);
 
-  const updateNote = useMutation(
-    trpc.notes.update.mutationOptions({
-      onMutate: async (newNote) => {
-        await queryClient.cancelQueries({
-          queryKey: trpc.notes.getOne.queryOptions({ id: noteId }).queryKey,
-        });
-        const prevNote = queryClient.getQueryData(
-          trpc.notes.getOne.queryOptions({ id: noteId }).queryKey,
-        );
-        queryClient.setQueryData(
-          trpc.notes.getOne.queryOptions({ id: noteId }).queryKey,
-          (oldNote) =>
-            oldNote
-              ? {
-                  ...oldNote,
-                  ...newNote,
-                }
-              : oldNote,
-        );
-
-        return { prevNote };
-      },
-      onSuccess: (updatedNote) => {
-        queryClient.setQueryData(
-          trpc.notes.getOne.queryOptions({ id: noteId }).queryKey,
-          updatedNote,
-        );
-        queryClient.invalidateQueries({
-          queryKey: trpc.notes.getMany.infiniteQueryOptions({}).queryKey,
-        });
-      },
-      onError: (_err, _newNote, ctx) => {
-        if (ctx?.prevNote) {
-          queryClient.setQueryData(
-            trpc.notes.getOne.queryOptions({ id: noteId }).queryKey,
-            ctx.prevNote,
-          );
-        }
-      },
-    }),
-  );
+  const updateNote = useUpdateNote(noteId);
 
   const debouncedTitleSave = useDebouncedCallback((newTitle: string) => {
     const trimmedTitle = newTitle.trim();
@@ -109,10 +66,11 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
           <div className="flex justify-between max-w-full">
             <Textarea
               value={title === "Untitled" ? "" : title}
+              name="title"
               onChange={handleTitleChange}
               onBlur={() => debouncedTitleSave.flush()}
               onKeyDown={handleTitleKeyDown}
-              className=" lg:text-4xl md:text-3xl text-2xl font-bold !bg-transparent w-full border-0 focus-visible:border-0 focus-visible:ring-0 px-0 shadow-none shrink-0 resize-none"
+              className=" lg:text-4xl md:text-3xl text-2xl font-bold !bg-transparent w-full min-h-0 py-0 md:py-1 border-0 focus-visible:border-0 focus-visible:ring-0 px-0 shadow-none shrink-0 resize-none"
               placeholder="Add a title"
               maxLength={100}
             />
@@ -120,6 +78,7 @@ export default function NoteEditor({ noteId }: { noteId: string }) {
           <div>
             <TagInput userTags={tags} noteTags={note.tags} noteId={note.id} />
           </div>
+          <Separator className="mt-4 bg-border/50" />
         </div>
         <div className="flex-1">
           <PlateEditor editor={editor} onChange={debouncedSaveContent} />

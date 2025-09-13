@@ -25,7 +25,7 @@ function HomeHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 3, ease: "easeInOut" }}
-        className="text-2xl"
+        className="text-base md:text-lg lg:text-xl xl:text-2xl"
       >
         Brainweave is not a digital file cabinet, it&apos;s an active partner in
         your learning process.

@@ -1,7 +1,7 @@
 "use client";
 
 import { HoverEffect } from "@/components/ui/card-hover-effect";
-import NoteCard from "@/modules/notes/ui/components/NoteCard";
+import NoteCard from "@/modules/notes/client/ui/components/NoteCard";
 import { useTRPC } from "@/trpc/client";
 import {
   useSuspenseInfiniteQuery,

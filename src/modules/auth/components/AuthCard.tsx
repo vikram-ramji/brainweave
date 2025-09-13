@@ -54,7 +54,7 @@ export default function AuthCard({
     config[variant];
   return (
     <div>
-      <Card className="flex flex-col gap-3 overflow-hidden backdrop-blur-md bg-card/20 border-card/30 shadow-xl">
+      <Card className="flex flex-col gap-3 overflow-hidden backdrop-blur-md bg-card/20 border-card/30">
         {title && (
           <CardHeader className="flex flex-col items-center text-center">
             <CardTitle className="text-2xl font-bold">{title}</CardTitle>

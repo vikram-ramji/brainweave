@@ -1,15 +1,10 @@
-"use client";
 import GeneratedAvatar from "@/components/ui/GeneratedAvatar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "better-auth";
 
-interface UserInfoProps {
-  user: User;
-}
-
-export default function UserInfo({ user }: UserInfoProps) {
+export default function UserAvatar({ user }: { user: User }) {
   return (
-    <div className="flex items-center gap-3">
+    <div>
       {user.image ? (
         <Avatar>
           <AvatarImage
@@ -29,12 +24,6 @@ export default function UserInfo({ user }: UserInfoProps) {
           className="size-8"
         />
       )}
-      <div className="flex flex-col gap-0.5 text-left overflow-hidden flex-1 min-w-0">
-        <span className="text-sm truncate w-full">{user.name}</span>
-        <span className="text-xs text-muted-foreground truncate w-full">
-          {user.email}
-        </span>
-      </div>
     </div>
   );
 }

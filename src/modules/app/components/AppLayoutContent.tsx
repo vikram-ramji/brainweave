@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import AppSidebar from "./AppSidebar";
 import { useSidebar } from "@/components/ui/sidebar";
 import SearchDialog from "./SearchDialog";
+import AppDock from "./AppDock";
 
 const SIDEBAR_CLOSE_DELAY = 200; // ms
 
@@ -12,7 +13,6 @@ export default function AppLayoutContent({
 }: {
   children: React.ReactNode;
 }) {
-  // isSidebarOpen comes from your existing provider and controls the "pushed" layout
   const {
     open: isSidebarOpen,
     setOpen: setIsSidebarOpen,
@@ -59,16 +59,21 @@ export default function AppLayoutContent({
         />
       )}
       <SearchDialog open={isSearchDialogOpen} setOpen={setIsSearchDialogOpen} />
-      <AppSidebar
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        isFloating={isFloating}
-        setIsFloating={setIsFloating}
-        setIsSidebarOpen={setIsSidebarOpen}
-        setIsSearchDialogOpen={setIsSearchDialogOpen}
-        setIsHoverLocked={setIsHoverLocked}
-      />
-      <main className="flex flex-col flex-1">{children}</main>
+      {!isMobile && (
+        <AppSidebar
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          isFloating={isFloating}
+          setIsFloating={setIsFloating}
+          setIsSidebarOpen={setIsSidebarOpen}
+          setIsSearchDialogOpen={setIsSearchDialogOpen}
+          setIsHoverLocked={setIsHoverLocked}
+        />
+      )}
+      <div className="flex flex-col w-full">
+        <main className="flex-1">{children}</main>
+        {isMobile && <AppDock />}
+      </div>
     </>
   );
 }

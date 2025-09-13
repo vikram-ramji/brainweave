@@ -112,7 +112,7 @@ export default function TagInput({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
-        <div className="flex items-center w-full py-1 px-2 border border-dashed rounded-full mt-2">
+        <div className="flex items-center w-full py-1 px-2 border border-dashed hover:border-foreground/50 rounded-full mt-2 text-muted-foreground hover:text-foreground">
           <TagIcon className="mr-2 size-4" />
           <div className="flex flex-wrap gap-1 flex-1 text-sm">
             {noteTags.map((tag, index) => (
