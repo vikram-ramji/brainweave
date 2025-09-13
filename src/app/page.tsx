@@ -17,6 +17,7 @@ export default async function Home() {
     <div className="flex flex-col">
       <HomeNavbar />
       <HomeHero />
+      <div className="h-40"></div>
     </div>
   );
 }

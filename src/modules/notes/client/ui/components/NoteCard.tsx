@@ -23,37 +23,20 @@ import {
 import { Loader2, Trash } from "lucide-react";
 import getLastUpdated from "@/utils/getLastUpdated";
 import Link from "next/link";
-import { Note } from "../../types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
-import { toast } from "sonner";
+import { Note } from "../../../types";
 import { Badge } from "@/components/ui/badge";
+import { useDeleteNote } from "../../hooks";
 
 type NoteCardProps = {
   note: Note;
 };
 
 export default function NoteCard({ note }: NoteCardProps) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-
   const updatedAt = note.updatedAt;
   const createdAt = note.createdAt;
   const isNoteUpdated = updatedAt.getTime() > createdAt.getTime();
 
-  const deleteNote = useMutation(
-    trpc.notes.delete.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.notes.getMany.infiniteQueryOptions({}).queryKey,
-        });
-        toast.success("Note deleted successfully");
-      },
-      onError: (error) => {
-        toast.error(error.message || "Failed to delete note");
-      },
-    }),
-  );
+  const deleteNote = useDeleteNote();
 
   const handleNoteDelete = () => {
     deleteNote.mutate({ id: note.id });
@@ -62,7 +45,7 @@ export default function NoteCard({ note }: NoteCardProps) {
   return (
     <Card
       key={note.id}
-      className="relative z-20 h-55 w-full overflow-hidden flex flex-col group border-border/50 shadow-md"
+      className="relative z-20 h-55 w-full overflow-hidden flex flex-col group border-border/50 shadow-lg shadow-primary/50 hover:shadow-none"
     >
       <Link
         href={`/notes/${encodeURIComponent(note.id)}`}

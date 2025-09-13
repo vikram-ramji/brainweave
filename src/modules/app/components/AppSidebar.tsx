@@ -15,7 +15,7 @@ import {
 import {
   ChevronRight,
   Files,
-  // Home,
+  Home,
   PlusCircle,
   SearchIcon,
   SidebarClose,
@@ -28,22 +28,21 @@ import { usePathname } from "next/navigation";
 import UserButton from "./UserButton";
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useRouter } from "@bprogress/next/app";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useCreateNote } from "@/modules/notes/client/hooks";
 
 const items = [
-  // {
-  //   label: "Dashboard",
-  //   href: "/dashboard",
-  //   icon: Home,
-  // },
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: Home,
+  },
   {
     label: "All Notes",
     href: "/notes",
@@ -71,32 +70,13 @@ export default function AppSidebar({
   onMouseLeave,
 }: AppSidebarProps) {
   const trpc = useTRPC();
-  const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data: tags } = useQuery(trpc.tags.getAll.queryOptions());
 
-  const createNote = useMutation(
-    trpc.notes.create.mutationOptions({
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.notes.getMany.infiniteQueryOptions({}).queryKey,
-        });
-        queryClient.setQueryData(
-          trpc.notes.getOne.queryOptions({ id: data.id }).queryKey,
-          { ...data, tags: [] },
-        );
-        router.push(`/notes/${data.id}`);
-      },
-      onError: () => {
-        toast.error("Failed to create note");
-      },
-    }),
-  );
+  const createNote = useCreateNote();
 
   const pathName = usePathname();
-  const isActive = (href: string) =>
-    pathName === href || pathName.startsWith(href + "/");
+  const isActive = (href: string) => pathName === href;
 
   const [isPinned, setIsPinned] = useState(true);
   const handlePinning = () => {
@@ -115,6 +95,7 @@ export default function AppSidebar({
       variant={isFloating ? "floating" : "sidebar"}
       onMouseEnter={isPinned ? undefined : onMouseEnter}
       onMouseLeave={isPinned ? undefined : onMouseLeave}
+      className="group/sidebar"
     >
       <SidebarHeader>
         <SidebarMenu>
@@ -133,7 +114,7 @@ export default function AppSidebar({
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsSearchDialogOpen(true)}
-                className="h-7 w-7"
+                className="h-7 w-7 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 ease-in-out"
               >
                 <SearchIcon className="size-4.5 text-foreground" />
               </Button>
@@ -141,7 +122,7 @@ export default function AppSidebar({
                 variant="ghost"
                 size="icon"
                 onClick={handlePinning}
-                className="h-7 w-7"
+                className="h-7 w-7 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 ease-in-out"
               >
                 {isPinned ? (
                   <SidebarClose className="size-4.5 text-foreground" />
@@ -160,7 +141,7 @@ export default function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => createNote.mutate()}
-                  className="flex items-center group/item relative !bg-primary !text-primary-foreground py-4.5 mb-1"
+                  className="flex items-center group/item relative bg-primary/80 hover:bg-primary !text-primary-foreground py-4.5 mb-1"
                   disabled={createNote.isPending}
                 >
                   <PlusCircle className="size-5 mb-0.5" />
@@ -175,7 +156,7 @@ export default function AppSidebar({
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton
                     asChild
-                    className="rounded-none hover:bg-sidebar hover:border-l-5 data-[active=true]:bg-sidebar data-[active=true]:border-l-5 border-primary"
+                    className="rounded-none text-muted-foreground hover:bg-sidebar hover:border-l-4 data-[active=true]:bg-sidebar data-[active=true]:border-l-4 border-primary"
                     isActive={isActive(item.href)}
                   >
                     <Link
@@ -183,9 +164,7 @@ export default function AppSidebar({
                       className="flex items-center group/item py-4.5"
                     >
                       <item.icon className="size-5 mb-0.5" />
-                      <span className="text-base transition-transform duration-200 ease-out group-hover/item:translate-x-1 will-change-transform">
-                        {item.label}
-                      </span>
+                      <span className="text-base">{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -194,25 +173,29 @@ export default function AppSidebar({
             <SidebarMenu>
               <Collapsible className="group/collapsible">
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton className="flex items-center w-full rounded-none group/item hover:bg-sidebar hover:border-l-5 data-[active=true]:bg-sidebar data-[active=true]:border-l-5 data-[state=open]:hover:bg-sidebar border-primary">
+                  <SidebarMenuButton
+                    isActive={isActive("/tags")}
+                    className="flex items-center w-full rounded-none group/item text-muted-foreground hover:bg-sidebar hover:border-l-4 data-[state=open]:border-l-4 data-[state=open]:text-foreground data-[state=open]:hover:bg-sidebar data-[active=true]:bg-sidebar data-[active=true]:border-l-4 border-primary py-4.5 group/item"
+                  >
                     <TagsIcon className="size-5 mb-0.5" />
-                    <span className="text-base transition-transform duration-200 ease-out group-hover/item:translate-x-1 will-change-transform">
-                      Tags
-                    </span>
-                    <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    <span className="text-base">Tags</span>
+                    <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover/item:opacity-100 group-data-[state=open]/collapsible:opacity-100 group-data-[state=open]/collapsible:rotate-90 transition-all duration-200 ease-in-out" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <SidebarMenuSub className="pl-2 gap-0">
+                  <SidebarMenuSub className="gap-0">
                     {tags && tags.length > 0 ? (
                       tags.map((tag) => (
                         <SidebarMenuItem key={tag.id}>
                           <SidebarMenuButton
                             asChild
-                            className="hover:bg-sidebar hover:border-l-5 border-primary rounded-none"
+                            isActive={isActive(`/tags/${tag.name}`)}
+                            className="hover:bg-sidebar text-muted-foreground border-primary rounded-none group/item data-[active=true]:bg-sidebar data-[active=true]:text-foreground"
                           >
                             <Link href={`/tags/${tag.name}`}>
-                              <span className="text-sm">{tag.name}</span>
+                              <span className="text-sm transition-transform duration-200 ease-out group-hover/item:translate-x-1 group-data-[active=true]/item:translate-x-1 will-change-transform">
+                                {tag.name}
+                              </span>
                             </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>

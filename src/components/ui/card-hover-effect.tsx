@@ -15,7 +15,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10",
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-8",
         className,
       )}
       onMouseLeave={() => setHoveredIndex(null)}
@@ -27,7 +27,7 @@ export const HoverEffect = ({
         >
           {hoveredIndex === idx && (
             <motion.span
-              className="absolute inset-0 h-full w-full bg-accent block rounded-3xl"
+              className="absolute inset-0 h-full w-full bg-primary/30 block rounded-3xl"
               layoutId="hoverBackground"
               // Add a transition prop for a smooth spring animation
               transition={{ type: "spring", stiffness: 350, damping: 30 }}

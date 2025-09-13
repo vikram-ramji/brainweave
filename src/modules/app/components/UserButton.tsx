@@ -64,10 +64,10 @@ export default function UserButton({
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size={"lg"}
-          className="shadow-sm flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent cursor-pointer"
+          className="shadow-sm flex items-center justify-between overflow-hidden data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus-visible:bg-sidebar-accent/50 focus-visible:border-sidebar-accent cursor-pointer shadow-primary/50 group/item"
         >
           <UserInfo user={data.user} />
-          <EllipsisVertical />
+          <EllipsisVertical className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 ease-in-out" />
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -76,14 +76,18 @@ export default function UserButton({
         className="rounded-lg"
         sideOffset={4}
       >
-        <DropdownMenuLabel className="flex items-center justify-between gap-2 p-0 font-normal">
+        <DropdownMenuLabel className="flex items-center justify-between gap-2 p-0 font-normal group/item">
           <UserInfo user={data.user} />
-          <ThemeToggleButton />
+          <ThemeToggleButton className="opacity-50 group-hover/item:opacity-100 transition-opacity duration-200 ease-in-out" />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {userMenuItems.map((item) => (
-            <DropdownMenuItem key={item.label} asChild>
+            <DropdownMenuItem
+              key={item.label}
+              asChild
+              className="cursor-pointer text-muted-foreground"
+            >
               <Link href={item.href}>
                 <item.icon />
                 <span className="ml-2">{item.label}</span>
@@ -92,7 +96,10 @@ export default function UserButton({
           ))}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignout}>
+        <DropdownMenuItem
+          onClick={handleSignout}
+          className="cursor-pointer text-muted-foreground"
+        >
           <LogOut />
           <span className="ml-2">Sign Out</span>
         </DropdownMenuItem>

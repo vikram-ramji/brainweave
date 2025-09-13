@@ -33,6 +33,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { motion } from "motion/react";
 
 export default function TagActions({ tag }: { tag: Tag }) {
   const [open, setOpen] = useState(false);
@@ -98,12 +99,13 @@ export default function TagActions({ tag }: { tag: Tag }) {
     <AlertDialog>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 ml-2"
+          <motion.button
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-5"
           >
-            <PenIcon className="size-5" />
-          </Button>
+            <PenIcon className="size-4" />
+          </motion.button>
         </PopoverTrigger>
         <PopoverContent sideOffset={10}>
           <Form {...form}>
@@ -135,7 +137,11 @@ export default function TagActions({ tag }: { tag: Tag }) {
                   Save
                 </Button>
                 <AlertDialogTrigger asChild>
-                  <Button size={"icon"} variant={"outline"}>
+                  <Button
+                    size={"icon"}
+                    variant={"outline"}
+                    className="text-muted-foreground"
+                  >
                     <Trash />
                   </Button>
                 </AlertDialogTrigger>
